@@ -21,6 +21,14 @@ final class WebViewViewController: UIViewController {
     return button
   }()
   
+  private lazy var progressView: UIProgressView = {
+    let progressView = UIProgressView()
+    progressView.translatesAutoresizingMaskIntoConstraints = false
+    progressView.tintColor = UIColor(named: "YPBlack")
+    progressView.progress = 0.5
+    return progressView
+  }()
+  
   private enum WebViewConstats {
     static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
   }
@@ -44,13 +52,18 @@ final class WebViewViewController: UIViewController {
       backButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
       backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
       backButton.widthAnchor.constraint(equalToConstant: 44),
-      backButton.heightAnchor.constraint(equalToConstant: 44)
+      backButton.heightAnchor.constraint(equalToConstant: 44),
+      
+      progressView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      progressView.topAnchor.constraint(equalTo: backButton.bottomAnchor),
+      progressView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor)
     ])
   }
   
   private func addViews() {
     view.addSubview(webView)
     view.addSubview(backButton)
+    view.addSubview(progressView)
   }
   
   @objc private func backButtonTapped() {

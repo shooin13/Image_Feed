@@ -2,6 +2,8 @@ import UIKit
 
 final class AuthViewController: UIViewController {
   
+
+  
   private lazy var loginButton: UIButton = {
     let button = UIButton()
     button.setTitle("Войти", for: .normal)
