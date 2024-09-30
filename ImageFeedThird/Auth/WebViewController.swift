@@ -25,7 +25,7 @@ final class WebViewViewController: UIViewController {
     let progressView = UIProgressView()
     progressView.translatesAutoresizingMaskIntoConstraints = false
     progressView.tintColor = UIColor(named: "YPBlack")
-    progressView.progress = 0.5
+    //    progressView.progress = 0.5
     return progressView
   }()
   
@@ -40,6 +40,32 @@ final class WebViewViewController: UIViewController {
     addViews()
     addConstraints()
     loadAuthView()
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(false)
+    webView.addObserver(
+      self,
+      forKeyPath: #keyPath(WKWebView.estimatedProgress),
+      options: .new,
+      context: nil
+    )
+  }
+  
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(false)
+    webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+  }
+  
+  override func observeValue(forKeyPath keyPath: String?,
+                             of object: Any?,
+                             change: [NSKeyValueChangeKey : Any]?,
+                             context: UnsafeMutableRawPointer?) {
+    if keyPath == #keyPath(WKWebView.estimatedProgress) {
+      updateProgress()
+    } else {
+      super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+    }
   }
   
   private func addConstraints() {
@@ -58,6 +84,13 @@ final class WebViewViewController: UIViewController {
       progressView.topAnchor.constraint(equalTo: backButton.bottomAnchor),
       progressView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor)
     ])
+  }
+  
+  private func updateProgress() {
+    print("progress updated")
+    progressView.progress = Float(webView.estimatedProgress)
+    print(Float(webView.estimatedProgress))
+    progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
   }
   
   private func addViews() {
