@@ -2,7 +2,7 @@ import UIKit
 
 final class AuthViewController: UIViewController {
   
-
+  private let oauth2Service = OAuth2Service.shared
   
   private lazy var loginButton: UIButton = {
     let button = UIButton()
