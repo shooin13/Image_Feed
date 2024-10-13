@@ -2,7 +2,8 @@ import UIKit
 
 class ImagesListViewController: UIViewController {
   
-  @IBOutlet private var tableView: UITableView!
+    @IBOutlet private var tableView: UITableView!
+  
   
   private let photosName: [String] = Array(0..<20).map{"\($0)"}
   
@@ -26,7 +27,7 @@ class ImagesListViewController: UIViewController {
       }
       
       let image = UIImage(named: "\(photosName[indexPath.row])")
-      _ = viewController.view // CRASH FIXED !?
+      _ = viewController.view
       viewController.image = image
     } else {
       super.prepare(for: segue, sender: sender)
@@ -35,7 +36,6 @@ class ImagesListViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
     tableView.rowHeight = 200
     tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
   }

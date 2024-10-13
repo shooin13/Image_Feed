@@ -86,8 +86,8 @@
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
-                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="JYY-JD-iWk"/>
-                                    <outlet property="delegate" destination="BYZ-38-t0r" id="IEj-qS-ESN"/>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="Pk3-MS-kor"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="ohi-70-V9j"/>
                                 </connections>
                             </tableView>
                         </subviews>
@@ -103,18 +103,18 @@
                     <tabBarItem key="tabBarItem" title="" image="ImagesTab" id="3UO-GX-l30"/>
                     <navigationItem key="navigationItem" id="c4M-cj-iQ8"/>
                     <connections>
-                        <outlet property="tableView" destination="2dk-xq-H4f" id="leu-ho-kcQ"/>
+                        <outlet property="tableView" destination="2dk-xq-H4f" id="VrR-Ve-APQ"/>
                         <segue destination="ldF-nQ-27g" kind="presentation" identifier="ShowSingleImage" id="eiX-6A-fwV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="918" y="-439"/>
+            <point key="canvasLocation" x="885" y="-446"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="A7U-0H-1pG">
             <objects>
-                <tabBarController id="uuc-yU-Rrs" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="TabBarControllerID" id="uuc-yU-Rrs" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="vkH-fg-105">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>

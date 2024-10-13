@@ -36,6 +36,7 @@ final class WebViewViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    webView.navigationDelegate = self
     view.backgroundColor = .white
     addViews()
     addConstraints()
@@ -68,7 +69,48 @@ final class WebViewViewController: UIViewController {
     }
   }
   
-  private func addConstraints() {
+  
+}
+
+extension WebViewViewController: WKNavigationDelegate {
+  func webView(_ webView: WKWebView,
+               decidePolicyFor navigationAction: WKNavigationAction,
+               decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
+    
+    print("ITS LIT", navigationAction.request.url)
+    
+    if let code = code(from: navigationAction) {
+      print("nav stopped")
+      decisionHandler(.cancel)
+      delegate?.webViewViewController(self, didAuthenticateWithCode: code)
+    } else {
+      print("nav allowed")
+      decisionHandler(.allow)
+    }
+    
+  }
+  
+  
+}
+
+private extension WebViewViewController {
+  
+  func loadAuthView() {
+    guard var urlComponents = URLComponents(string: WebViewConstats.unsplashAuthorizeURLString) else { return }
+    urlComponents.queryItems = [
+      URLQueryItem(name: "client_id", value: Constants.accessKey),
+      URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
+      URLQueryItem(name: "response_type", value: "code"),
+      URLQueryItem(name: "scope", value: Constants.accessScope)
+    ]
+    
+    guard let url = urlComponents.url else { return }
+    
+    let request = URLRequest(url: url)
+    webView.load(request)
+  }
+  
+  func addConstraints() {
     NSLayoutConstraint.activate([
       webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
       webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -86,48 +128,19 @@ final class WebViewViewController: UIViewController {
     ])
   }
   
-  private func updateProgress() {
-    print("progress updated")
+  func updateProgress() {
     progressView.progress = Float(webView.estimatedProgress)
-    print(Float(webView.estimatedProgress))
     progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
   }
   
-  private func addViews() {
+  func addViews() {
     view.addSubview(webView)
     view.addSubview(backButton)
     view.addSubview(progressView)
   }
   
-  @objc private func backButtonTapped() {
+  @objc func backButtonTapped() {
     delegate?.webViewViewControllerDidCancel(self)
-  }
-  
-  private func loadAuthView() {
-    guard var urlComponents = URLComponents(string: WebViewConstats.unsplashAuthorizeURLString) else { return }
-    urlComponents.queryItems = [
-      URLQueryItem(name: "client_id", value: Constants.accessKey),
-      URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-      URLQueryItem(name: "response_type", value: "code"),
-      URLQueryItem(name: "scope", value: Constants.accessScope)
-    ]
-    
-    guard let url = urlComponents.url else { return }
-    
-    let request = URLRequest(url: url)
-    webView.load(request)
-  }
-  
-  
-}
-
-extension WebViewViewController: WKNavigationDelegate {
-  func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
-    if let code = code(from: navigationAction) {
-      decisionHandler(.cancel)
-    } else {
-      decisionHandler(.allow)
-    }
   }
   
   private func code(from navigationAction: WKNavigationAction) -> String? {
@@ -143,9 +156,3 @@ extension WebViewViewController: WKNavigationDelegate {
     return nil
   }
 }
-
-//extension WebViewViewController: WebViewViewControllerDelegate {
-//
-//}
-
-

@@ -3,10 +3,6 @@ import Foundation
 
 final class OAuth2Service {
   
-//  private enum OAuth2ServiceError: Error {
-//    case codeError
-//  }
-  
   static let shared = OAuth2Service()
   private init() {}
   
@@ -27,44 +23,38 @@ final class OAuth2Service {
     return request
   }
   
-  private func fetchOAuthToken(code: String, handler: @escaping (Result<Data, Error>) -> Void) {
+  func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
     
-    guard var request = makeOAuthTokenRequest(code: code) else { return }
-    
-    //    let task = URLSession.shared.dataTask(with: request) { data, response, error in
-    //      
-    //      if let error {
-    //        handler(.failure(error))
-    //        return
-    //      }
-    //      
-    //      if let response = response as? HTTPURLResponse, response.statusCode < 200 || response.statusCode >= 300 {
-    //        handler(.failure(OAuth2ServiceError.codeError))
-    //        return
-    //      }
-    //      guard let data else { return }
-    //      handler(.success(data))
-    //    }
+    guard let request = makeOAuthTokenRequest(code: code) else { return }
     
     let task = URLSession.shared.data(for: request) { result in
       switch result {
+        
       case .success(let data):
         do {
-          let jsonResponse = try JSONSerialization.jsonObject(with: data)
+          let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
+          
+          let tokenStorage = OAuth2TokenStorage()
+          tokenStorage.token = tokenResponse.access_token
+          
+          completion(.success(tokenResponse.access_token))
         } catch {
-          print("Error JSONSerialization")
+          print("Error decoding JSON \(error)")
+          completion(.failure(error))
         }
+        
       case .failure(let error):
         switch error {
         case let NetworkError.httpStatusCode(statusCode):
-          print("statusCode mistake")
+          print("statusCode mistake \(statusCode)")
         case let NetworkError.urlRequestError(urlError):
-          print("urlRequest mistake")
+          print("urlRequest mistake \(urlError)")
         case NetworkError.urlSessionError:
           print("urlSession mistake")
         default:
           print("Unknown mistake")
         }
+        completion(.failure(error))
       }
     }
     

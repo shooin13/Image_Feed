@@ -53,17 +53,36 @@ final class AuthViewController: UIViewController {
   
   @objc private func loginButtonTapped() {
     let secondVC = WebViewViewController()
-        secondVC.delegate = self // Устанавливаем делегатом
-        secondVC.modalPresentationStyle = .fullScreen
-        present(secondVC, animated: true)
+    secondVC.delegate = self // Устанавливаем делегатом
+    secondVC.modalPresentationStyle = .fullScreen
+    present(secondVC, animated: true)
   }
   
 }
 
 extension AuthViewController: WebViewViewControllerDelegate {
   func webViewViewController(_ viewController: WebViewViewController, didAuthenticateWithCode code: String) {
-      
+    oauth2Service.fetchOAuthToken(code: code) { result in
+      switch result {
+      case .success(let token):
+        print("token obtained \(token)")
+        viewController.dismiss(animated: true) {
+          // Переход на Tab Bar Controller
+          let storyboard = UIStoryboard(name: "Main", bundle: nil)
+          if let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarControllerID") as? UITabBarController {
+            tabBarController.modalPresentationStyle = .fullScreen
+            self.present(tabBarController, animated: true)
+          }
+        }
+      case .failure(let error):
+        print("auth token not obtained \(error)")
+        let alert = UIAlertController(title: "Ошибка", message: "Не удалось получить токен: \(error.localizedDescription)", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ОК", style: .default))
+        self.present(alert, animated: true)
+      }
+    }
   }
+  
   
   func webViewViewControllerDidCancel(_ viewController: WebViewViewController) {
     print("authVC cancelled")
