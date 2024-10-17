@@ -1,19 +1,14 @@
 import UIKit
 
+// MARK: - SplashViewController
+
 final class SplashViewController: UIViewController {
+  
+  // MARK: - Properties
   
   private let storage = OAuth2TokenStorage()
   
-  private func checkIfUserIsAuthorized() {
-    if let token = storage.token {
-      switchToTabBarViewController()
-    } else {
-      print("not authorized")
-      let notAuthorizedUserVC = AuthViewController()
-      notAuthorizedUserVC.modalPresentationStyle = .fullScreen
-      self.present(notAuthorizedUserVC, animated: true)
-    }
-  }
+  // MARK: - View Lifecycle
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -25,6 +20,16 @@ final class SplashViewController: UIViewController {
     checkIfUserIsAuthorized()
   }
   
+  // MARK: - User Authorization
+  
+  private func checkIfUserIsAuthorized() {
+    if let token = storage.token {
+      switchToTabBarViewController()
+    } else {
+      presentNotAuthorizedViewController()
+    }
+  }
+  
   private func switchToTabBarViewController() {
     print("authorized")
     let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -32,6 +37,13 @@ final class SplashViewController: UIViewController {
       tabBarController.modalPresentationStyle = .fullScreen
       self.present(tabBarController, animated: true)
     }
+  }
+  
+  private func presentNotAuthorizedViewController() {
+    print("not authorized")
+    let notAuthorizedUserVC = AuthViewController()
+    notAuthorizedUserVC.modalPresentationStyle = .fullScreen
+    self.present(notAuthorizedUserVC, animated: true)
   }
   
 }

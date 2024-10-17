@@ -221,7 +221,7 @@
                                     <constraint firstAttribute="width" secondItem="p0d-4m-uIb" secondAttribute="height" multiplier="1:1" id="Srp-Vf-wQx"/>
                                 </constraints>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="Button" image="BackButtonLight"/>
+                                <state key="normal" title="Button" image="BackButtonLight" backgroundImage="BackButtonLight"/>
                                 <connections>
                                     <action selector="backButtonDidTap" destination="ldF-nQ-27g" eventType="touchUpInside" id="DQA-xx-cJy"/>
                                 </connections>

@@ -1,5 +1,7 @@
 import UIKit
 
+// MARK: - GradientView
+
 final class GradientView: UIView {
   override class var layerClass: AnyClass {
     return CAGradientLayer.classForCoder()
@@ -14,7 +16,9 @@ final class GradientView: UIView {
     super.init(frame: frame)
     configureGradientLayer()
   }
-
+  
+  // MARK: - Gradient Configuration
+  
   private func configureGradientLayer() {
     let gradientLayer = layer as! CAGradientLayer
     gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]

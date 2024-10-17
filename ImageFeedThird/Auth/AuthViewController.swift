@@ -1,6 +1,10 @@
 import UIKit
 
+// MARK: - AuthViewController
+
 final class AuthViewController: UIViewController {
+  
+  // MARK: - Properties
   
   private let oauth2Service = OAuth2Service.shared
   
@@ -23,6 +27,7 @@ final class AuthViewController: UIViewController {
     return imageView
   }()
   
+  // MARK: - View Lifecycle
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -31,6 +36,7 @@ final class AuthViewController: UIViewController {
     setupConstraints()
   }
   
+  // MARK: - Setup Views
   
   private func addViews() {
     view.addSubview(loginButton)
@@ -51,14 +57,18 @@ final class AuthViewController: UIViewController {
     ])
   }
   
+  // MARK: - Actions
+  
   @objc private func loginButtonTapped() {
     let secondVC = WebViewViewController()
-    secondVC.delegate = self // Устанавливаем делегатом
+    secondVC.delegate = self
     secondVC.modalPresentationStyle = .fullScreen
     present(secondVC, animated: true)
   }
   
 }
+
+// MARK: - WebViewViewControllerDelegate
 
 extension AuthViewController: WebViewViewControllerDelegate {
   func webViewViewController(_ viewController: WebViewViewController, didAuthenticateWithCode code: String) {
@@ -88,6 +98,5 @@ extension AuthViewController: WebViewViewControllerDelegate {
     print("authVC cancelled")
     viewController.dismiss(animated: true)
   }
-  
-  
 }
+

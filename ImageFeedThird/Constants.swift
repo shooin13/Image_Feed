@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - Constants
+
 enum Constants {
   static let accessKey = "sxag6w_pOMqE-cNeFfQiIWSVzRUcJ1M04pDKw7L5gR4"
   static let secretKey = "p2V7BnQobsI82ci7EMtZkBixDKXuB7JVQ_5gTtIN6S4"

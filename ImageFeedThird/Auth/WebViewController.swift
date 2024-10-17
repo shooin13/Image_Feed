@@ -1,7 +1,11 @@
 import UIKit
 import WebKit
 
+// MARK: - WebViewViewController
+
 final class WebViewViewController: UIViewController {
+  
+  // MARK: - Properties
   
   weak var delegate: WebViewViewControllerDelegate?
   
@@ -25,7 +29,6 @@ final class WebViewViewController: UIViewController {
     let progressView = UIProgressView()
     progressView.translatesAutoresizingMaskIntoConstraints = false
     progressView.tintColor = UIColor(named: "YPBlack")
-    //    progressView.progress = 0.5
     return progressView
   }()
   
@@ -33,6 +36,7 @@ final class WebViewViewController: UIViewController {
     static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
   }
   
+  // MARK: - View Lifecycle
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -58,6 +62,8 @@ final class WebViewViewController: UIViewController {
     webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
   }
   
+  // MARK: - KVO Observer
+  
   override func observeValue(forKeyPath keyPath: String?,
                              of object: Any?,
                              change: [NSKeyValueChangeKey : Any]?,
@@ -69,33 +75,9 @@ final class WebViewViewController: UIViewController {
     }
   }
   
+  // MARK: - Loading the Authorization View
   
-}
-
-extension WebViewViewController: WKNavigationDelegate {
-  func webView(_ webView: WKWebView,
-               decidePolicyFor navigationAction: WKNavigationAction,
-               decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
-    
-    print("ITS LIT", navigationAction.request.url)
-    
-    if let code = code(from: navigationAction) {
-      print("nav stopped")
-      decisionHandler(.cancel)
-      delegate?.webViewViewController(self, didAuthenticateWithCode: code)
-    } else {
-      print("nav allowed")
-      decisionHandler(.allow)
-    }
-    
-  }
-  
-  
-}
-
-private extension WebViewViewController {
-  
-  func loadAuthView() {
+  private func loadAuthView() {
     guard var urlComponents = URLComponents(string: WebViewConstats.unsplashAuthorizeURLString) else { return }
     urlComponents.queryItems = [
       URLQueryItem(name: "client_id", value: Constants.accessKey),
@@ -110,7 +92,15 @@ private extension WebViewViewController {
     webView.load(request)
   }
   
-  func addConstraints() {
+  // MARK: - UI Setup
+  
+  private func addViews() {
+    view.addSubview(webView)
+    view.addSubview(backButton)
+    view.addSubview(progressView)
+  }
+  
+  private func addConstraints() {
     NSLayoutConstraint.activate([
       webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
       webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -128,20 +118,18 @@ private extension WebViewViewController {
     ])
   }
   
-  func updateProgress() {
+  private func updateProgress() {
     progressView.progress = Float(webView.estimatedProgress)
     progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
   }
   
-  func addViews() {
-    view.addSubview(webView)
-    view.addSubview(backButton)
-    view.addSubview(progressView)
-  }
+  // MARK: - Actions
   
-  @objc func backButtonTapped() {
+  @objc private func backButtonTapped() {
     delegate?.webViewViewControllerDidCancel(self)
   }
+  
+  // MARK: - Navigation Handling
   
   private func code(from navigationAction: WKNavigationAction) -> String? {
     if
@@ -157,6 +145,27 @@ private extension WebViewViewController {
   }
 }
 
+// MARK: - WKNavigationDelegate
+
+extension WebViewViewController: WKNavigationDelegate {
+  func webView(_ webView: WKWebView,
+               decidePolicyFor navigationAction: WKNavigationAction,
+               decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
+    
+    print("ITS LIT", navigationAction.request.url)
+    
+    if let code = code(from: navigationAction) {
+      print("nav stopped")
+      decisionHandler(.cancel)
+      delegate?.webViewViewController(self, didAuthenticateWithCode: code)
+    } else {
+      print("nav allowed")
+      decisionHandler(.allow)
+    }
+  }
+}
+
+// MARK: - WebViewViewControllerDelegate Protocol
 
 protocol WebViewViewControllerDelegate: AnyObject {
   func webViewViewController(_ viewController: WebViewViewController, didAuthenticateWithCode code: String)
