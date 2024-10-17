@@ -42,8 +42,18 @@ final class SplashViewController: UIViewController {
   private func presentNotAuthorizedViewController() {
     print("not authorized")
     let notAuthorizedUserVC = AuthViewController()
+    notAuthorizedUserVC.delegate = self
     notAuthorizedUserVC.modalPresentationStyle = .fullScreen
     self.present(notAuthorizedUserVC, animated: true)
   }
   
+}
+
+
+extension SplashViewController: AuthViewControllerDelegate {
+  func didAuthenticate(_ vc: AuthViewController) {
+    print("authenticated")
+    vc.dismiss(animated: true)
+    switchToTabBarViewController()
+  }
 }

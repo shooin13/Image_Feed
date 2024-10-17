@@ -8,6 +8,8 @@ final class AuthViewController: UIViewController {
   
   private let oauth2Service = OAuth2Service.shared
   
+  weak var delegate: AuthViewControllerDelegate?
+  
   private lazy var loginButton: UIButton = {
     let button = UIButton()
     button.setTitle("Войти", for: .normal)
@@ -76,8 +78,8 @@ extension AuthViewController: WebViewViewControllerDelegate {
       switch result {
       case .success(let token):
         print("token obtained \(token)")
+        self.delegate?.didAuthenticate(self)
         viewController.dismiss(animated: true) {
-          // Переход на Tab Bar Controller
           let storyboard = UIStoryboard(name: "Main", bundle: nil)
           if let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarControllerID") as? UITabBarController {
             tabBarController.modalPresentationStyle = .fullScreen
@@ -100,3 +102,6 @@ extension AuthViewController: WebViewViewControllerDelegate {
   }
 }
 
+protocol AuthViewControllerDelegate: AnyObject {
+    func didAuthenticate(_ vc: AuthViewController)
+}
