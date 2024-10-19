@@ -1,8 +1,10 @@
 import UIKit
 
+// MARK: - ImagesListViewController
+
 class ImagesListViewController: UIViewController {
   
-  @IBOutlet private var tableView: UITableView!
+  // MARK: - Properties
   
   private let photosName: [String] = Array(0..<20).map{"\($0)"}
   
@@ -15,6 +17,19 @@ class ImagesListViewController: UIViewController {
     return formatter
   }()
   
+  // MARK: - Outlets
+  
+  @IBOutlet private var tableView: UITableView!
+  
+  // MARK: - View Lifecycle
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    tableView.rowHeight = 200
+    tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+  }
+  
+  // MARK: - Navigation
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     if segue.identifier == showSingleImageIndentifier {
       guard
@@ -26,20 +41,41 @@ class ImagesListViewController: UIViewController {
       }
       
       let image = UIImage(named: "\(photosName[indexPath.row])")
-      _ = viewController.view // CRASH FIXED !?
+      _ = viewController.view
       viewController.image = image
     } else {
       super.prepare(for: segue, sender: sender)
     }
   }
   
-  override func viewDidLoad() {
-    super.viewDidLoad()
+  // MARK: - Cell Configuration
+  
+  private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+    guard let image = UIImage(named: "\(indexPath.row)") else { return }
+    cell.cellImage.image = image
+    configureGradient(for: cell)
+    cell.cellLabel.text = dateFormatter.string(from: Date())
+    cell.cellButton.setTitle("", for: .normal)
+    let isLiked = indexPath.row % 2 == 0
+    let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
+    cell.cellButton.setImage(likeImage, for: .normal)
     
-    tableView.rowHeight = 200
-    tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+    configureGradient(for: cell)
   }
+  
+  private func configureGradient(for cell: ImagesListCell) {
+    let view = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
+    let gradient = CAGradientLayer()
+    
+    gradient.frame = view.bounds
+    gradient.colors = [UIColor.white.cgColor, UIColor.black.cgColor]
+    
+    view.layer.insertSublayer(gradient, at: 0)
+  }
+  
 }
+
+// MARK: - UITableViewDataSource
 
 extension ImagesListViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -59,30 +95,7 @@ extension ImagesListViewController: UITableViewDataSource {
   }
 }
 
-extension ImagesListViewController {
-  func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-    guard let image = UIImage(named: "\(indexPath.row)") else { return }
-    cell.cellImage.image = image
-    configureGradient(for: cell)
-    cell.cellLabel.text = dateFormatter.string(from: Date())
-    cell.cellButton.setTitle("", for: .normal)
-    let isLiked = indexPath.row % 2 == 0
-    let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
-    cell.cellButton.setImage(likeImage, for: .normal)
-    
-    configureGradient(for: cell)
-  }
-  
-  func configureGradient(for cell: ImagesListCell) {
-    let view = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
-    let gradient = CAGradientLayer()
-    
-    gradient.frame = view.bounds
-    gradient.colors = [UIColor.white.cgColor, UIColor.black.cgColor]
-    
-    view.layer.insertSublayer(gradient, at: 0)
-  }
-}
+// MARK: - UITableViewDelegate
 
 extension ImagesListViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

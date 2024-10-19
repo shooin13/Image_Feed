@@ -1,7 +1,9 @@
 import UIKit
 
+// MARK: - ImagesListCell
+
 final class ImagesListCell: UITableViewCell {
-    static let reuseIdentifier = "ImagesListCell"
+  static let reuseIdentifier = "ImagesListCell"
   
   @IBOutlet weak var cellImage: UIImageView!
   @IBOutlet weak var cellLabel: UILabel!

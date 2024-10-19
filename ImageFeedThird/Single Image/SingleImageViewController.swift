@@ -1,6 +1,11 @@
 import UIKit
 
+// MARK: - SingleImageViewController
+
 final class SingleImageViewController: UIViewController {
+  
+  // MARK: - Properties
+  
   var image: UIImage? {
     didSet {
       guard
@@ -15,6 +20,8 @@ final class SingleImageViewController: UIViewController {
     }
   }
   
+  // MARK: - Outlets
+  
   @IBOutlet private weak var imageView: UIImageView!
   
   @IBOutlet private weak var backButton: UIButton!
@@ -22,6 +29,8 @@ final class SingleImageViewController: UIViewController {
   @IBOutlet private weak var scrollView: UIScrollView!
   
   @IBOutlet private weak var shareButton: UIButton!
+  
+  // MARK: - Actions
   
   @IBAction private func backButtonDidTap() {
     dismiss(animated: true)
@@ -33,10 +42,15 @@ final class SingleImageViewController: UIViewController {
     present(activityController, animated: true)
   }
   
+  
+  // MARK: - View Lifecycle
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     prepareUI()
   }
+  
+  // MARK: - UI Setup
   
   private func prepareUI() {
     imageView.image = image
@@ -53,6 +67,8 @@ final class SingleImageViewController: UIViewController {
     rescaleImage()
     centerImage()
   }
+  
+  // MARK: - Image Scaling
   
   private func rescaleImage() {
     guard let image = imageView.image else { return }
@@ -83,6 +99,8 @@ final class SingleImageViewController: UIViewController {
     scrollView.contentInset = UIEdgeInsets(top: verticalInset, left: horizontalInset, bottom: verticalInset, right: horizontalInset)
   }
 }
+
+// MARK: - UIScrollViewDelegate
 
 extension SingleImageViewController: UIScrollViewDelegate {
   

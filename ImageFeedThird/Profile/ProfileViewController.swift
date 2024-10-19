@@ -1,6 +1,10 @@
 import UIKit
 
+// MARK: - ProfileViewController
+
 final class ProfileViewController: UIViewController {
+  
+  // MARK: - UI Elements
   
   private lazy var profileImageView: UIImageView = {
     let image = UIImageView()
@@ -45,6 +49,8 @@ final class ProfileViewController: UIViewController {
     return button
   }()
   
+  // MARK: - View Lifecycle
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     addViews()
@@ -55,6 +61,8 @@ final class ProfileViewController: UIViewController {
     super.viewDidLayoutSubviews()
     profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
   }
+  
+  // MARK: - UI Setup
   
   private func setupConstraints() {
     NSLayoutConstraint.activate([
@@ -84,5 +92,4 @@ final class ProfileViewController: UIViewController {
     view.addSubview(logoutButton)
     view.addSubview(profileDescription)
   }
-  
 }
