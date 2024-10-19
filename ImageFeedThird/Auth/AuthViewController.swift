@@ -75,6 +75,7 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
   func webViewViewController(_ viewController: WebViewViewController, didAuthenticateWithCode code: String) {
+    ProgressHUD.animationType = .circleRotateChase
     ProgressHUD.animate()
     oauth2Service.fetchOAuthToken(code: code) { result in
       ProgressHUD.dismiss()
