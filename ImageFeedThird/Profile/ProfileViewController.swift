@@ -55,6 +55,14 @@ final class ProfileViewController: UIViewController {
     super.viewDidLoad()
     addViews()
     setupConstraints()
+    ProfileService.shared.fetchProfile { result in
+        switch result {
+        case .success(let userProfile):
+            print("User Profile: \(userProfile)")
+        case .failure(let error):
+            print("Failed to fetch user profile: \(error)")
+        }
+    }
   }
   
   override func viewDidLayoutSubviews() {

@@ -1,3 +1,5 @@
+// MARK: - AuthServiceError
+
 enum AuthServiceError: Error {
   case invalidRequest
   case requestInProgress
