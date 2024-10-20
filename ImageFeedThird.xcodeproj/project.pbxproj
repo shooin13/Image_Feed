@@ -29,6 +29,8 @@
 		57E029602CC570550000178E /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E0295F2CC5704A0000178E /* ProfileService.swift */; };
 		57E029622CC570850000178E /* ProfileResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E029612CC570800000178E /* ProfileResult.swift */; };
 		57E029642CC571360000178E /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E029632CC571320000178E /* Profile.swift */; };
+		57E029662CC5C4490000178E /* ProfileImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E029652CC5C4420000178E /* ProfileImageService.swift */; };
+		57E029682CC5C4670000178E /* UserResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E029672CC5C4610000178E /* UserResult.swift */; };
 		57F0382B2CA1E1470047EB19 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F0382A2CA1E1420047EB19 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +58,8 @@
 		57E0295F2CC5704A0000178E /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		57E029612CC570800000178E /* ProfileResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileResult.swift; sourceTree = "<group>"; };
 		57E029632CC571320000178E /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		57E029652CC5C4420000178E /* ProfileImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageService.swift; sourceTree = "<group>"; };
+		57E029672CC5C4610000178E /* UserResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserResult.swift; sourceTree = "<group>"; };
 		57F0382A2CA1E1420047EB19 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -132,6 +136,7 @@
 		577F23982CB0877100A6EF9D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				57E029652CC5C4420000178E /* ProfileImageService.swift */,
 				57E0295F2CC5704A0000178E /* ProfileService.swift */,
 				577F23962CB0834B00A6EF9D /* OAuth2Service.swift */,
 				577F23A42CB3122B00A6EF9D /* OAuth2TokenStorage.swift */,
@@ -150,6 +155,7 @@
 		577F23A12CB3112C00A6EF9D /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				57E029672CC5C4610000178E /* UserResult.swift */,
 				57E029632CC571320000178E /* Profile.swift */,
 				57E029612CC570800000178E /* ProfileResult.swift */,
 				577F23A22CB3113500A6EF9D /* OAuthTokenResponseBody.swift */,
@@ -252,6 +258,7 @@
 				578F19752C8A41D50006F048 /* GradientView.swift in Sources */,
 				57E0295E2CC56A500000178E /* UIBlockingProgressHUD.swift in Sources */,
 				5755C3C12CA4806300961E90 /* WebViewController.swift in Sources */,
+				57E029682CC5C4670000178E /* UserResult.swift in Sources */,
 				577F23972CB0834B00A6EF9D /* OAuth2Service.swift in Sources */,
 				577F23A32CB3113C00A6EF9D /* OAuthTokenResponseBody.swift in Sources */,
 				57E029602CC570550000178E /* ProfileService.swift in Sources */,
@@ -264,6 +271,7 @@
 				570F50142C897F25007A8DA2 /* SceneDelegate.swift in Sources */,
 				5755C3BE2CA47AA200961E90 /* AuthViewController.swift in Sources */,
 				57E029642CC571360000178E /* Profile.swift in Sources */,
+				57E029662CC5C4490000178E /* ProfileImageService.swift in Sources */,
 				57E029622CC570850000178E /* ProfileResult.swift in Sources */,
 				57F0382B2CA1E1470047EB19 /* Constants.swift in Sources */,
 			);

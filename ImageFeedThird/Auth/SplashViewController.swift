@@ -6,7 +6,8 @@ final class SplashViewController: UIViewController {
   
   // MARK: - Properties
   private let storage = OAuth2TokenStorage()
-  private let profileService = ProfileService.shared // Инстанс сервиса профиля
+  private let profileService = ProfileService.shared
+  private let profileImageService = ProfileImageService.shared
   
   // MARK: - View Lifecycle
   override func viewDidLoad() {
@@ -42,11 +43,20 @@ final class SplashViewController: UIViewController {
       switch result {
       case .success(let profile):
         print("Profile fetched: \(profile)")
+        
+        ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { result in
+          switch result {
+          case .success(let imageURL):
+            print("Avatar URL: \(imageURL)")
+          case .failure(let error):
+            print("Failed to fetch avatar URL: \(error)")
+          }
+        }
         self.switchToTabBarViewController()
         
       case .failure(let error):
         print("Failed to fetch profile: \(error)")
-        self.presentErrorAlert(message: "Не удалось загрузить профиль")
+        self.presentErrorAlert(message: "Failed to load profile")
       }
     }
   }
