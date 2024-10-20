@@ -4,6 +4,10 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
   
+  //MARK: - Properties
+  
+  private var profile = ProfileService.shared.profile
+  
   // MARK: - UI Elements
   
   private lazy var profileImageView: UIImageView = {
@@ -17,7 +21,7 @@ final class ProfileViewController: UIViewController {
   
   private lazy var profileName: UILabel = {
     let label = UILabel()
-    label.text = "Pavel Nikolaev"
+    label.text = profile?.name
     label.font = UIFont.boldSystemFont(ofSize: 23)
     label.textColor = .white
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -26,7 +30,7 @@ final class ProfileViewController: UIViewController {
   
   private lazy var profileNick: UILabel = {
     let label = UILabel()
-    label.text = "@the314"
+    label.text = profile?.loginName
     label.font = UIFont.systemFont(ofSize: 13)
     label.textColor = UIColor(red: 174/255, green: 175/255, blue: 180/255, alpha: 1)
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -35,7 +39,7 @@ final class ProfileViewController: UIViewController {
   
   private lazy var profileDescription: UILabel = {
     let label = UILabel()
-    label.text = "Hello world!"
+    label.text = profile?.bio
     label.font = UIFont.systemFont(ofSize: 13)
     label.textColor = .white
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -46,6 +50,7 @@ final class ProfileViewController: UIViewController {
     let button = UIButton()
     button.setImage(UIImage(named: "LogOutButton"), for: .normal)
     button.translatesAutoresizingMaskIntoConstraints = false
+    button.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
     return button
   }()
   
@@ -91,5 +96,11 @@ final class ProfileViewController: UIViewController {
     view.addSubview(profileNick)
     view.addSubview(logoutButton)
     view.addSubview(profileDescription)
+  }
+  
+  //MARK: - Actions
+  
+  @objc private func logoutButtonTapped() {
+    print("logout tapped")
   }
 }

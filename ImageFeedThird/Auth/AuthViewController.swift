@@ -68,7 +68,6 @@ final class AuthViewController: UIViewController {
     secondVC.modalPresentationStyle = .fullScreen
     present(secondVC, animated: true)
   }
-  
 }
 
 // MARK: - WebViewViewControllerDelegate

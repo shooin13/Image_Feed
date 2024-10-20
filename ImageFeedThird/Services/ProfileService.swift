@@ -21,6 +21,8 @@ final class ProfileService {
   private var task: URLSessionTask?
   private var ongoingRequests: [((Result<Profile, Error>) -> Void)] = []
   
+  private(set) var profile: Profile?
+  
   //MARK: - Initializer
   
   private init() {}
@@ -50,6 +52,7 @@ final class ProfileService {
           do {
             let profileResult = try JSONDecoder().decode(ProfileResult.self, from: data)
             let profile = self.convertToProfile(from: profileResult)
+            self.profile = profile
             self.completeAllRequests(with: .success(profile))
           } catch {
             print("Error decoding JSON \(error)")
