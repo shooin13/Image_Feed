@@ -75,10 +75,13 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
   func webViewViewController(_ viewController: WebViewViewController, didAuthenticateWithCode code: String) {
-    ProgressHUD.animationType = .circleRotateChase
-    ProgressHUD.animate()
+    
+    UIBlockingProgressHUD.show()
+    
     oauth2Service.fetchOAuthToken(code: code) { result in
-      ProgressHUD.dismiss()
+      
+      UIBlockingProgressHUD.dismiss()
+      
       switch result {
       case .success(let token):
         print("token obtained \(token)")

@@ -25,6 +25,7 @@
 		578F19752C8A41D50006F048 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578F19742C8A41D50006F048 /* GradientView.swift */; };
 		578F19772C8A44FF0006F048 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578F19762C8A44FF0006F048 /* ProfileViewController.swift */; };
 		57D85EDC2C8B8C130049661B /* SingleImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D85EDB2C8B8C130049661B /* SingleImageViewController.swift */; };
+		57E0295E2CC56A500000178E /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E0295D2CC56A430000178E /* UIBlockingProgressHUD.swift */; };
 		57F0382B2CA1E1470047EB19 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F0382A2CA1E1420047EB19 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,7 @@
 		578F19742C8A41D50006F048 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		578F19762C8A44FF0006F048 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		57D85EDB2C8B8C130049661B /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
+		57E0295D2CC56A430000178E /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		57F0382A2CA1E1420047EB19 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -82,6 +84,7 @@
 		570F50102C897F25007A8DA2 /* ImageFeedThird */ = {
 			isa = PBXGroup;
 			children = (
+				57E0295D2CC56A430000178E /* UIBlockingProgressHUD.swift */,
 				57F0382A2CA1E1420047EB19 /* Constants.swift */,
 				577F23A12CB3112C00A6EF9D /* Models */,
 				577F239C2CB3080600A6EF9D /* Extensions */,
@@ -238,6 +241,7 @@
 				570F50162C897F25007A8DA2 /* ImagesListViewController.swift in Sources */,
 				5729DFDF2C8984F6007B3E55 /* ImagesListCell.swift in Sources */,
 				578F19752C8A41D50006F048 /* GradientView.swift in Sources */,
+				57E0295E2CC56A500000178E /* UIBlockingProgressHUD.swift in Sources */,
 				5755C3C12CA4806300961E90 /* WebViewController.swift in Sources */,
 				577F23972CB0834B00A6EF9D /* OAuth2Service.swift in Sources */,
 				577F23A32CB3113C00A6EF9D /* OAuthTokenResponseBody.swift in Sources */,
