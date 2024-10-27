@@ -1,11 +1,11 @@
+import Foundation
+
 // MARK: - AuthServiceError
 
 enum AuthServiceError: Error {
   case invalidRequest
   case requestInProgress
 }
-
-import Foundation
 
 // MARK: - OAuth2Service
 
@@ -67,19 +67,13 @@ final class OAuth2Service {
     task?.cancel()
     lastCode = code
     
-    let task = URLSession.shared.data(for: request) { result in
+    let task = urlSession.objectTask(for: request) { (result: Result<OAuthTokenResponseBody, Error>) in
       DispatchQueue.main.async {
         switch result {
-        case .success(let data):
-          do {
-            let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-            let tokenStorage = OAuth2TokenStorage()
-            tokenStorage.token = tokenResponse.access_token
-            self.completeAll(for: code, result: .success(tokenResponse.access_token))
-          } catch {
-            print("Error decoding JSON \(error)")
-            self.completeAll(for: code, result: .failure(error))
-          }
+        case .success(let tokenResponse):
+          let tokenStorage = OAuth2TokenStorage()
+          tokenStorage.token = tokenResponse.access_token
+          self.completeAll(for: code, result: .success(tokenResponse.access_token))
         case .failure(let error):
           self.handleNetworkError(error)
           self.completeAll(for: code, result: .failure(error))
@@ -96,7 +90,7 @@ final class OAuth2Service {
     if let completions = ongoingRequests[code] {
       completions.forEach { $0(result) }
     }
-    ongoingRequests[code] = nil // Убираем записи о запросе после завершения
+    ongoingRequests[code] = nil
   }
   
   // MARK: - Error Handling

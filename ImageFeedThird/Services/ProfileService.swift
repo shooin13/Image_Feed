@@ -45,19 +45,13 @@ final class ProfileService {
     }
     task?.cancel()
     
-    let task = urlSession.data(for: request) { result in
+    let task = urlSession.objectTask(for: request) { (result: Result<ProfileResult, Error>) in
       DispatchQueue.main.async {
         switch result {
-        case .success(let data):
-          do {
-            let profileResult = try JSONDecoder().decode(ProfileResult.self, from: data)
-            let profile = self.convertToProfile(from: profileResult)
-            self.profile = profile
-            self.completeAllRequests(with: .success(profile))
-          } catch {
-            print("Error decoding JSON \(error)")
-            self.completeAllRequests(with: .failure(error))
-          }
+        case .success(let profileResult):
+          let profile = self.convertToProfile(from: profileResult)
+          self.profile = profile
+          self.completeAllRequests(with: .success(profile))
         case .failure(let error):
           print("Network error: \(error)")
           self.completeAllRequests(with: .failure(error))

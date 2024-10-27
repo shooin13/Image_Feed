@@ -1,14 +1,13 @@
 import Foundation
 
-//MARK: - ProfileImageServiceError
+// MARK: - ProfileImageServiceError
 
 enum ProfileImageServiceError: Error {
   case invalidRequest
   case requestInProgress
 }
 
-
-//MARK: - ProfileImageService
+// MARK: - ProfileImageService
 
 final class ProfileImageService {
   
@@ -18,7 +17,7 @@ final class ProfileImageService {
   
   static let shared = ProfileImageService()
   
-  //MARK: - Properties
+  // MARK: - Properties
   
   private let urlSession: URLSession = .shared
   private var task: URLSessionTask?
@@ -26,11 +25,11 @@ final class ProfileImageService {
   
   private(set) var avatarURL: String?
   
-  //MARK: - Initializer
+  // MARK: - Initializer
   
   private init() {}
   
-  //MARK: - Fetch Profile Image URL
+  // MARK: - Fetch Profile Image URL
   
   func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
     assert(Thread.isMainThread)
@@ -48,20 +47,14 @@ final class ProfileImageService {
     }
     task?.cancel()
     
-    let task = urlSession.data(for: request) { result in
+    let task = urlSession.objectTask(for: request) { (result: Result<UserResult, Error>) in
       DispatchQueue.main.async {
         switch result {
-        case .success(let data):
-          do {
-            let userResult = try JSONDecoder().decode(UserResult.self, from: data)
-            let avatarURL = userResult.profile_image.small
-            self.avatarURL = avatarURL
-            self.completeAllRequests(with: .success(avatarURL))
-            NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": avatarURL])
-          } catch {
-            print("Error decoding JSON \(error)")
-            self.completeAllRequests(with: .failure(error))
-          }
+        case .success(let userResult):
+          let avatarURL = userResult.profile_image.small
+          self.avatarURL = avatarURL
+          self.completeAllRequests(with: .success(avatarURL))
+          NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": avatarURL])
         case .failure(let error):
           print("Network error: \(error)")
           self.completeAllRequests(with: .failure(error))
@@ -72,8 +65,7 @@ final class ProfileImageService {
     task.resume()
   }
   
-  
-  //MARK: - Make Request
+  // MARK: - Make Request
   
   private func makeProfileImageRequest(for username: String) -> URLRequest? {
     guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
