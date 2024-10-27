@@ -8,6 +8,8 @@ final class ProfileViewController: UIViewController {
   
   private var profile = ProfileService.shared.profile
   
+  private var profileImageServiceObserver: NSObjectProtocol
+  
   // MARK: - UI Elements
   
   private lazy var profileImageView: UIImageView = {
@@ -60,6 +62,17 @@ final class ProfileViewController: UIViewController {
     super.viewDidLoad()
     addViews()
     setupConstraints()
+    
+    profileImageServiceObserver = NotificationCenter.default
+      .addObserver(
+        forName: ProfileImageService.didChangeNotification,
+        object: nil,
+        queue: .main
+      ) { [weak self] _ in
+        guard let self = self else { return }
+        self.updateAvatar()
+      }
+    updateAvatar()
   }
   
   override func viewDidLayoutSubviews() {
@@ -96,6 +109,13 @@ final class ProfileViewController: UIViewController {
     view.addSubview(profileNick)
     view.addSubview(logoutButton)
     view.addSubview(profileDescription)
+  }
+  
+  private func updateAvatar() {
+    guard let profileImageURL = ProfileImageService.shared.avatarURL,
+    let url = URL(string: profileImageURL)
+    else { return }
+    // TODO [Sprint 11] Обновить аватар, используя Kingfisher
   }
   
   //MARK: - Actions

@@ -12,6 +12,8 @@ enum ProfileImageServiceError: Error {
 
 final class ProfileImageService {
   
+  static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+  
   // MARK: - Shared Instance
   
   static let shared = ProfileImageService()
@@ -55,6 +57,7 @@ final class ProfileImageService {
             let avatarURL = userResult.profile_image.small
             self.avatarURL = avatarURL
             self.completeAllRequests(with: .success(avatarURL))
+            NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": profileImageURL])
           } catch {
             print("Error decoding JSON \(error)")
             self.completeAllRequests(with: .failure(error))
