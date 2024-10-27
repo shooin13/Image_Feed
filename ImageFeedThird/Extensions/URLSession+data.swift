@@ -4,11 +4,11 @@ enum NetworkError: Error {
   case httpStatusCode(Int)
   case urlRequestError(Error)
   case urlSessionError
-  case decodingError(Error)
 }
 
 extension URLSession {
   func data(for request: URLRequest, completion: @escaping (Result<Data, Error>) -> Void) -> URLSessionTask {
+    
     let fulfillCompletionOnTheMainThread: (Result<Data, Error>) -> Void = { result in
       DispatchQueue.main.async {
         completion(result)
@@ -20,11 +20,14 @@ extension URLSession {
         if 200 ..< 300 ~= statusCode {
           fulfillCompletionOnTheMainThread(.success(data))
         } else {
+          print("[dataTask]: NetworkError - HTTP статус код \(statusCode), Request: \(request)")
           fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
         }
       } else if let error = error {
+        print("[dataTask]: NetworkError - Ошибка URL запроса \(error.localizedDescription), Request: \(request)")
         fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
       } else {
+        print("[dataTask]: NetworkError - Ошибка URL сессии, Request: \(request)")
         fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
       }
     })
@@ -38,7 +41,7 @@ extension URLSession {
     completion: @escaping (Result<T, Error>) -> Void
   ) -> URLSessionTask {
     let decoder = JSONDecoder()
-    
+    l
     let task = data(for: request) { (result: Result<Data, Error>) in
       switch result {
       case .success(let data):
@@ -48,18 +51,19 @@ extension URLSession {
             completion(.success(decodedObject))
           }
         } catch {
+          print("[objectTask]: Ошибка декодирования \(error.localizedDescription), Данные: \(String(data: data, encoding: .utf8) ?? ""), Request: \(request)")
           DispatchQueue.main.async {
-            completion(.failure(NetworkError.decodingError(error)))
+            completion(.failure(NetworkError.urlSessionError))
           }
         }
         
       case .failure(let error):
+        print("[objectTask]: Ошибка - \(error.localizedDescription), Request: \(request)")
         DispatchQueue.main.async {
           completion(.failure(error))
         }
       }
     }
-    
     return task
   }
 }

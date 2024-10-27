@@ -6,8 +6,7 @@ enum ProfileServiceError: Error {
   case requestInProgress
 }
 
-
-//MARK: - ProfileService
+// MARK: - ProfileService
 
 final class ProfileService {
   
@@ -23,11 +22,11 @@ final class ProfileService {
   
   private(set) var profile: Profile?
   
-  //MARK: - Initializer
+  // MARK: - Initializer
   
   private init() {}
   
-  //MARK: - Fetch Profile
+  // MARK: - Fetch Profile
   
   func fetchProfile(completion: @escaping (Result<Profile, Error>) -> Void) {
     assert(Thread.isMainThread)
@@ -40,6 +39,7 @@ final class ProfileService {
     }
     
     guard let request = makeProfileRequest() else {
+      print("[fetchProfile]: ProfileServiceError - Неверный запрос")
       completeAllRequests(with: .failure(ProfileServiceError.invalidRequest))
       return
     }
@@ -53,7 +53,7 @@ final class ProfileService {
           self.profile = profile
           self.completeAllRequests(with: .success(profile))
         case .failure(let error):
-          print("Network error: \(error)")
+          print("[fetchProfile]: Ошибка сети - \(error.localizedDescription)")
           self.completeAllRequests(with: .failure(error))
         }
       }
@@ -62,12 +62,11 @@ final class ProfileService {
     task.resume()
   }
   
-  
-  //MARK: - Make Request
+  // MARK: - Make Request
   
   private func makeProfileRequest() -> URLRequest? {
     guard let url = URL(string: "https://api.unsplash.com/me") else {
-      assertionFailure("Failed to create URL")
+      assertionFailure("Не удалось создать URL")
       return nil
     }
     
@@ -75,7 +74,7 @@ final class ProfileService {
     request.httpMethod = "GET"
     
     guard let accessToken = OAuth2TokenStorage().token else {
-      assertionFailure("No access token available")
+      assertionFailure("Токен доступа отсутствует")
       return nil
     }
     

@@ -42,6 +42,7 @@ final class ProfileImageService {
     }
     
     guard let request = makeProfileImageRequest(for: username) else {
+      print("[fetchProfileImageURL]: ProfileImageServiceError - Неверный запрос, Username: \(username)")
       completeAllRequests(with: .failure(ProfileImageServiceError.invalidRequest))
       return
     }
@@ -56,7 +57,7 @@ final class ProfileImageService {
           self.completeAllRequests(with: .success(avatarURL))
           NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": avatarURL])
         case .failure(let error):
-          print("Network error: \(error)")
+          print("[fetchProfileImageURL]: Ошибка сети - \(error.localizedDescription), Username: \(username)")
           self.completeAllRequests(with: .failure(error))
         }
       }
@@ -69,7 +70,7 @@ final class ProfileImageService {
   
   private func makeProfileImageRequest(for username: String) -> URLRequest? {
     guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
-      assertionFailure("Failed to create URL")
+      assertionFailure("Не удалось создать URL")
       return nil
     }
     
@@ -77,7 +78,7 @@ final class ProfileImageService {
     request.httpMethod = "GET"
     
     guard let accessToken = OAuth2TokenStorage().token else {
-      assertionFailure("No access token available")
+      assertionFailure("Токен доступа отсутствует")
       return nil
     }
     

@@ -30,7 +30,7 @@ final class OAuth2Service {
   
   private func makeOAuthTokenRequest(code: String) -> URLRequest? {
     guard let baseURL = URL(string: "https://unsplash.com") else {
-      assertionFailure("Failed to create URL")
+      assertionFailure("Не удалось создать URL")
       return nil
     }
     let url = URL(
@@ -60,6 +60,7 @@ final class OAuth2Service {
     }
     
     guard let request = makeOAuthTokenRequest(code: code) else {
+      print("[fetchOAuthToken]: AuthServiceError - Неверный запрос, Code: \(code)")
       completeAll(for: code, result: .failure(AuthServiceError.invalidRequest))
       return
     }
@@ -75,7 +76,7 @@ final class OAuth2Service {
           tokenStorage.token = tokenResponse.access_token
           self.completeAll(for: code, result: .success(tokenResponse.access_token))
         case .failure(let error):
-          self.handleNetworkError(error)
+          print("[fetchOAuthToken]: Ошибка сети - \(error.localizedDescription), Code: \(code)")
           self.completeAll(for: code, result: .failure(error))
         }
       }
