@@ -9,6 +9,8 @@ final class WebViewViewController: UIViewController {
   
   weak var delegate: WebViewViewControllerDelegate?
   
+  private var estimatedProgressObservation: NSKeyValueObservation?
+  
   private lazy var webView: WKWebView = {
     let webView = WKWebView()
     webView.backgroundColor = .white
@@ -45,34 +47,19 @@ final class WebViewViewController: UIViewController {
     addViews()
     addConstraints()
     loadAuthView()
-  }
-  
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(false)
-    webView.addObserver(
-      self,
-      forKeyPath: #keyPath(WKWebView.estimatedProgress),
-      options: .new,
-      context: nil
-    )
+    
+    estimatedProgressObservation = webView.observe(
+      \.estimatedProgress,
+       options: [],
+       changeHandler: { [weak self] _, _ in
+         guard let self = self else { return }
+         self.updateProgress()
+       })
   }
   
   override func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(false)
-    webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
-  }
-  
-  // MARK: - KVO Observer
-  
-  override func observeValue(forKeyPath keyPath: String?,
-                             of object: Any?,
-                             change: [NSKeyValueChangeKey : Any]?,
-                             context: UnsafeMutableRawPointer?) {
-    if keyPath == #keyPath(WKWebView.estimatedProgress) {
-      updateProgress()
-    } else {
-      super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-    }
+    estimatedProgressObservation = nil
   }
   
   // MARK: - Loading the Authorization View
