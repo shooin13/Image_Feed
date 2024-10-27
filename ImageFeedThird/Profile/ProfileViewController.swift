@@ -8,7 +8,7 @@ final class ProfileViewController: UIViewController {
   
   private var profile = ProfileService.shared.profile
   
-  private var profileImageServiceObserver: NSObjectProtocol
+  private var profileImageServiceObserver: NSObjectProtocol?
   
   // MARK: - UI Elements
   

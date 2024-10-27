@@ -57,7 +57,7 @@ final class ProfileImageService {
             let avatarURL = userResult.profile_image.small
             self.avatarURL = avatarURL
             self.completeAllRequests(with: .success(avatarURL))
-            NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": profileImageURL])
+            NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": avatarURL])
           } catch {
             print("Error decoding JSON \(error)")
             self.completeAllRequests(with: .failure(error))
