@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 // MARK: - ProfileViewController
 
@@ -62,16 +63,6 @@ final class ProfileViewController: UIViewController {
     super.viewDidLoad()
     addViews()
     setupConstraints()
-    
-    profileImageServiceObserver = NotificationCenter.default
-      .addObserver(
-        forName: ProfileImageService.didChangeNotification,
-        object: nil,
-        queue: .main
-      ) { [weak self] _ in
-        guard let self = self else { return }
-        self.updateAvatar()
-      }
     updateAvatar()
   }
   
@@ -113,9 +104,36 @@ final class ProfileViewController: UIViewController {
   
   private func updateAvatar() {
     guard let profileImageURL = ProfileImageService.shared.avatarURL,
-    let url = URL(string: profileImageURL)
-    else { return }
-    // TODO [Sprint 11] Обновить аватар, используя Kingfisher
+          let url = URL(string: profileImageURL) else {
+      print("Invalid avatar URL.")
+      return
+    }
+    
+    profileImageView.kf.indicatorType = .activity
+    
+    if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+      profileImageView.kf.setImage(
+        with: url,
+        placeholder: UIImage(named: "placeholder"),
+        options: [
+          .targetCache(appDelegate.avatarImageCache),
+          .transition(.fade(0.3))
+        ]
+      ) { result in
+        switch result {
+        case .success(let value):
+          print("Avatar updated: \(value.image)")
+        case .failure(let error):
+          print("Error updating avatar: \(error.localizedDescription)")
+        }
+      }
+    }
+  }
+  
+  private func updateProfileUI() {
+    profileName.text = profile?.name
+    profileNick.text = profile?.loginName
+    profileDescription.text = profile?.bio
   }
   
   //MARK: - Actions

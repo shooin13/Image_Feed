@@ -41,7 +41,6 @@ extension URLSession {
     completion: @escaping (Result<T, Error>) -> Void
   ) -> URLSessionTask {
     let decoder = JSONDecoder()
-    l
     let task = data(for: request) { (result: Result<Data, Error>) in
       switch result {
       case .success(let data):
