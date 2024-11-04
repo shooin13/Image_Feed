@@ -24,6 +24,7 @@
 		577F239E2CB3081700A6EF9D /* URLSession+data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577F239D2CB3080E00A6EF9D /* URLSession+data.swift */; };
 		577F23A32CB3113C00A6EF9D /* OAuthTokenResponseBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577F23A22CB3113500A6EF9D /* OAuthTokenResponseBody.swift */; };
 		577F23A52CB3123600A6EF9D /* OAuth2TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577F23A42CB3122B00A6EF9D /* OAuth2TokenStorage.swift */; };
+		578099882CD922CC002972E9 /* TabBarController.swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578099872CD922C4002972E9 /* TabBarController.swift.swift */; };
 		578F19752C8A41D50006F048 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578F19742C8A41D50006F048 /* GradientView.swift */; };
 		578F19772C8A44FF0006F048 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578F19762C8A44FF0006F048 /* ProfileViewController.swift */; };
 		57D85EDC2C8B8C130049661B /* SingleImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D85EDB2C8B8C130049661B /* SingleImageViewController.swift */; };
@@ -53,6 +54,7 @@
 		577F239D2CB3080E00A6EF9D /* URLSession+data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+data.swift"; sourceTree = "<group>"; };
 		577F23A22CB3113500A6EF9D /* OAuthTokenResponseBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthTokenResponseBody.swift; sourceTree = "<group>"; };
 		577F23A42CB3122B00A6EF9D /* OAuth2TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2TokenStorage.swift; sourceTree = "<group>"; };
+		578099872CD922C4002972E9 /* TabBarController.swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift.swift; sourceTree = "<group>"; };
 		578F19742C8A41D50006F048 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		578F19762C8A44FF0006F048 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		57D85EDB2C8B8C130049661B /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
@@ -103,13 +105,11 @@
 				577F23A12CB3112C00A6EF9D /* Models */,
 				577F239C2CB3080600A6EF9D /* Extensions */,
 				577F23982CB0877100A6EF9D /* Services */,
+				578099862CD9229E002972E9 /* TabBarController */,
 				5755C3BF2CA4804F00961E90 /* Auth */,
 				570F50112C897F25007A8DA2 /* AppDelegate.swift */,
 				570F50132C897F25007A8DA2 /* SceneDelegate.swift */,
-				57D85EDD2C8B95450049661B /* Single Image */,
-				57D85EDA2C8B8BF90049661B /* Profile */,
 				578F19742C8A41D50006F048 /* GradientView.swift */,
-				5729DFE02C898542007B3E55 /* ImagesList */,
 				570F50172C897F25007A8DA2 /* Main.storyboard */,
 				570F501A2C897F26007A8DA2 /* Assets.xcassets */,
 				570F501C2C897F26007A8DA2 /* LaunchScreen.storyboard */,
@@ -123,6 +123,7 @@
 			children = (
 				570F50152C897F25007A8DA2 /* ImagesListViewController.swift */,
 				5729DFDE2C8984F6007B3E55 /* ImagesListCell.swift */,
+				57D85EDD2C8B95450049661B /* Single Image */,
 			);
 			path = ImagesList;
 			sourceTree = "<group>";
@@ -165,6 +166,16 @@
 				577F23A22CB3113500A6EF9D /* OAuthTokenResponseBody.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		578099862CD9229E002972E9 /* TabBarController */ = {
+			isa = PBXGroup;
+			children = (
+				578099872CD922C4002972E9 /* TabBarController.swift.swift */,
+				57D85EDA2C8B8BF90049661B /* Profile */,
+				5729DFE02C898542007B3E55 /* ImagesList */,
+			);
+			path = TabBarController;
 			sourceTree = "<group>";
 		};
 		57D85EDA2C8B8BF90049661B /* Profile */ = {
@@ -271,6 +282,7 @@
 				577F23A52CB3123600A6EF9D /* OAuth2TokenStorage.swift in Sources */,
 				57D85EDC2C8B8C130049661B /* SingleImageViewController.swift in Sources */,
 				578F19772C8A44FF0006F048 /* ProfileViewController.swift in Sources */,
+				578099882CD922CC002972E9 /* TabBarController.swift.swift in Sources */,
 				570741142CC026FC000737AF /* SplashViewController.swift in Sources */,
 				570F50122C897F25007A8DA2 /* AppDelegate.swift in Sources */,
 				577F239E2CB3081700A6EF9D /* URLSession+data.swift in Sources */,
