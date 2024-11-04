@@ -102,6 +102,7 @@
 			children = (
 				57E0295D2CC56A430000178E /* UIBlockingProgressHUD.swift */,
 				57F0382A2CA1E1420047EB19 /* Constants.swift */,
+				578F19742C8A41D50006F048 /* GradientView.swift */,
 				577F23A12CB3112C00A6EF9D /* Models */,
 				577F239C2CB3080600A6EF9D /* Extensions */,
 				577F23982CB0877100A6EF9D /* Services */,
@@ -109,7 +110,6 @@
 				5755C3BF2CA4804F00961E90 /* Auth */,
 				570F50112C897F25007A8DA2 /* AppDelegate.swift */,
 				570F50132C897F25007A8DA2 /* SceneDelegate.swift */,
-				578F19742C8A41D50006F048 /* GradientView.swift */,
 				570F50172C897F25007A8DA2 /* Main.storyboard */,
 				570F501A2C897F26007A8DA2 /* Assets.xcassets */,
 				570F501C2C897F26007A8DA2 /* LaunchScreen.storyboard */,
