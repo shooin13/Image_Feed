@@ -8,8 +8,6 @@ class ImagesListViewController: UIViewController {
   
   private let photosName: [String] = Array(0..<20).map{"\($0)"}
   
-  private let showSingleImageIndentifier = "ShowSingleImage"
-  
   private lazy var dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .long
@@ -17,41 +15,47 @@ class ImagesListViewController: UIViewController {
     return formatter
   }()
   
-  // MARK: - Outlets
+  // MARK: - UI Elements
   
-  @IBOutlet private var tableView: UITableView!
+  private let tableView: UITableView = {
+    let tableView = UITableView()
+    tableView.translatesAutoresizingMaskIntoConstraints = false
+    tableView.rowHeight = 200
+    tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+    tableView.backgroundColor = UIColor(named: "YPBlack")
+    return tableView
+  }()
   
   // MARK: - View Lifecycle
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    tableView.rowHeight = 200
-    tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+    setupTableView()
+    setupConstraints()
   }
   
-  // MARK: - Navigation
-  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    if segue.identifier == showSingleImageIndentifier {
-      guard
-        let viewController = segue.destination as? SingleImageViewController,
-        let indexPath = sender as? IndexPath
-      else {
-        assertionFailure("Invalid segue identifier or indexPath")
-        return
-      }
-      
-      let image = UIImage(named: "\(photosName[indexPath.row])")
-      _ = viewController.view
-      viewController.image = image
-    } else {
-      super.prepare(for: segue, sender: sender)
-    }
+  // MARK: - Setup Methods
+  
+  private func setupTableView() {
+    tableView.dataSource = self
+    tableView.delegate = self
+    tableView.register(ImagesListCell.self, forCellReuseIdentifier: ImagesListCell.reuseIdentifier)
+    view.addSubview(tableView)
+  }
+  
+  private func setupConstraints() {
+    NSLayoutConstraint.activate([
+      tableView.topAnchor.constraint(equalTo: view.topAnchor),
+      tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+    ])
   }
   
   // MARK: - Cell Configuration
   
   private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-    guard let image = UIImage(named: "\(indexPath.row)") else { return }
+    guard let image = UIImage(named: "\(photosName[indexPath.row])") else { return }
     cell.cellImage.image = image
     configureGradient(for: cell)
     cell.cellLabel.text = dateFormatter.string(from: Date())
@@ -59,20 +63,15 @@ class ImagesListViewController: UIViewController {
     let isLiked = indexPath.row % 2 == 0
     let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
     cell.cellButton.setImage(likeImage, for: .normal)
-    
-    configureGradient(for: cell)
   }
   
   private func configureGradient(for cell: ImagesListCell) {
     let view = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
     let gradient = CAGradientLayer()
-    
     gradient.frame = view.bounds
     gradient.colors = [UIColor.white.cgColor, UIColor.black.cgColor]
-    
     view.layer.insertSublayer(gradient, at: 0)
   }
-  
 }
 
 // MARK: - UITableViewDataSource
@@ -99,15 +98,22 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    performSegue(withIdentifier: showSingleImageIndentifier, sender: indexPath)
+    
+    let singleImageVC = SingleImageViewController()
+    
+    singleImageVC.image = UIImage(named: photosName[indexPath.row])
+    
+    singleImageVC.modalPresentationStyle = .fullScreen
+    present(singleImageVC, animated: true)
   }
   
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    let imageWidth = Double((UIImage(named: "\(indexPath.row)")?.size.width)!)
-    let imageHeight = Double((UIImage(named: "\(indexPath.row)")?.size.height)!)
+    guard let image = UIImage(named: "\(indexPath.row)") else { return 200 }
+    let imageWidth = Double(image.size.width)
+    let imageHeight = Double(image.size.height)
     let viewWidth = Double(tableView.frame.size.width) - (16 * 2)
     let viewHeight = (viewWidth / imageWidth) * imageHeight
     
-    return viewHeight
+    return CGFloat(viewHeight)
   }
 }

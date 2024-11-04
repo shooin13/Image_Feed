@@ -64,11 +64,9 @@ final class SplashViewController: UIViewController {
   // MARK: - Navigation
   
   private func switchToTabBarViewController() {
-    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-    if let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarControllerID") as? UITabBarController {
-      tabBarController.modalPresentationStyle = .fullScreen
-      self.present(tabBarController, animated: true)
-    }
+    let tabBarController = TabBarController()
+    tabBarController.modalPresentationStyle = .fullScreen
+    self.present(tabBarController, animated: true)
   }
   
   private func presentNotAuthorizedViewController() {
