@@ -86,11 +86,9 @@ extension AuthViewController: WebViewViewControllerDelegate {
         print("token obtained \(token)")
         self.delegate?.didAuthenticate(self)
         viewController.dismiss(animated: true) {
-          let storyboard = UIStoryboard(name: "Main", bundle: nil)
-          if let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarControllerID") as? UITabBarController {
+          let tabBarController = TabBarController()
             tabBarController.modalPresentationStyle = .fullScreen
             self.present(tabBarController, animated: true)
-          }
         }
       case .failure(let error):
         print("auth token not obtained \(error)")
