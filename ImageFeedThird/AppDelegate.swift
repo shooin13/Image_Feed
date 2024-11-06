@@ -4,16 +4,7 @@ import Kingfisher
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
   
-  lazy var avatarImageCache: ImageCache = {
-    let cache = ImageCache(name: "AvatarImageCache")
-    cache.memoryStorage.config.totalCostLimit = 10 * 1024 * 1024
-    cache.diskStorage.config.sizeLimit = 10 * 1024 * 1024
-    return cache
-  }()
-  
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    avatarImageCache = ImageCache(name: "AvatarImageCache")
-    avatarImageCache.memoryStorage.config.totalCostLimit = 10 * 1024 * 1024
     return true
   }
   

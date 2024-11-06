@@ -1,4 +1,5 @@
 import Foundation
+import Kingfisher
 
 // MARK: - Constants
 
@@ -14,5 +15,12 @@ enum Constants {
     } else {
       fatalError("Invalid URL")
     }
+  }()
+  
+  static let avatarImageCache: ImageCache = {
+    let cache = ImageCache(name: "AvatarImageCache")
+    cache.memoryStorage.config.totalCostLimit = 10 * 1024 * 1024
+    cache.diskStorage.config.sizeLimit = 10 * 1024 * 1024
+    return cache
   }()
 }
