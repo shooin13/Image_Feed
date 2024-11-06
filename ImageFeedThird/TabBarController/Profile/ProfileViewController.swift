@@ -116,7 +116,7 @@ final class ProfileViewController: UIViewController {
         with: url,
         placeholder: UIImage(named: "Placeholder"),
         options: [
-          .targetCache(appDelegate.avatarImageCache),
+          .targetCache(Constants.avatarImageCache),
           .transition(.fade(0.3))
         ]
       ) { result in
