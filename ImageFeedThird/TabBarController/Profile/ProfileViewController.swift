@@ -9,13 +9,11 @@ final class ProfileViewController: UIViewController {
   
   private var profile = ProfileService.shared.profile
   
-  private var profileImageServiceObserver: NSObjectProtocol?
-  
   // MARK: - UI Elements
   
   private lazy var profileImageView: UIImageView = {
     let image = UIImageView()
-    image.image = UIImage(named: "ProfileMockImage")
+    image.image = UIImage(named: "Placeholder")
     image.translatesAutoresizingMaskIntoConstraints = false
     image.layer.cornerRadius = image.frame.width / 2
     image.layer.masksToBounds = true
@@ -64,6 +62,7 @@ final class ProfileViewController: UIViewController {
     addViews()
     setupConstraints()
     updateAvatar()
+    updateProfileUI()
   }
   
   override func viewDidLayoutSubviews() {
@@ -95,6 +94,7 @@ final class ProfileViewController: UIViewController {
   }
   
   private func addViews() {
+    view.backgroundColor = UIColor(named: "YPBlack")
     view.addSubview(profileImageView)
     view.addSubview(profileName)
     view.addSubview(profileNick)
@@ -114,7 +114,7 @@ final class ProfileViewController: UIViewController {
     if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
       profileImageView.kf.setImage(
         with: url,
-        placeholder: UIImage(named: "placeholder"),
+        placeholder: UIImage(named: "Placeholder"),
         options: [
           .targetCache(appDelegate.avatarImageCache),
           .transition(.fade(0.3))
@@ -131,9 +131,15 @@ final class ProfileViewController: UIViewController {
   }
   
   private func updateProfileUI() {
-    profileName.text = profile?.name
-    profileNick.text = profile?.loginName
-    profileDescription.text = profile?.bio
+    
+    guard let profile = ProfileService.shared.profile else {
+      print("failed to fetch profile")
+      return
+    }
+    profileName.text = profile.name
+    profileNick.text = profile.loginName
+    profileDescription.text = profile.bio
+    print("Profile UI Updated")
   }
   
   //MARK: - Actions
