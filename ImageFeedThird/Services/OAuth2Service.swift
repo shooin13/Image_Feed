@@ -34,12 +34,12 @@ final class OAuth2Service {
       return nil
     }
 
-    let endpoint = "/oauth/token" +
-    "?client_id=$Constants.accessKey)" +
-    "&client_secret=$Constants.secretKey)" +
-    "&redirect_uri=$Constants.redirectURI)" +
-    "&code=$code)" +
-    "&grant_type=authorization_code"
+    let endpoint = "/oauth/token"
+    + "?client_id=\(Constants.accessKey)"
+    + "&&client_secret=\(Constants.secretKey)"
+    + "&&redirect_uri=\(Constants.redirectURI)"
+    + "&&code=\(code)"
+    + "&&grant_type=authorization_code"
     
     guard let url = URL(string: endpoint, relativeTo: baseURL) else {
       assertionFailure("Не удалось создать конечный URL")
