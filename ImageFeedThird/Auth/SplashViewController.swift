@@ -12,7 +12,7 @@ final class SplashViewController: UIViewController {
   // MARK: - View Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    print("Splash VC loaded")
+    print("Экран загрузки загружен")
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -42,21 +42,21 @@ final class SplashViewController: UIViewController {
       
       switch result {
       case .success(let profile):
-        print("Profile fetched: \(profile)")
+        print("Профиль загружен: \(profile)")
         
         ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { result in
           switch result {
           case .success(let imageURL):
-            print("Avatar URL: \(imageURL)")
+            print("URL аватара: \(imageURL)")
           case .failure(let error):
-            print("Failed to fetch avatar URL: \(error)")
+            print("Не удалось загрузить URL аватара: \(error)")
           }
         }
         self.switchToTabBarViewController()
         
       case .failure(let error):
-        print("Failed to fetch profile: \(error)")
-        self.presentErrorAlert(message: "Failed to load profile")
+        print("Не удалось загрузить профиль: \(error)")
+        self.presentErrorAlert(message: "Не удалось загрузить профиль")
       }
     }
   }
@@ -89,6 +89,7 @@ extension SplashViewController: AuthViewControllerDelegate {
   func didAuthenticate(_ vc: AuthViewController) {
     vc.dismiss(animated: true) {
       guard let token = self.storage.token else {
+        print("Токен отсутствует после авторизации")
         return
       }
       self.fetchProfile(token: token)
