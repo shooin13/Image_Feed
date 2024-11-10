@@ -33,7 +33,7 @@ final class OAuth2Service {
       assertionFailure("Не удалось создать URL")
       return nil
     }
-
+    
     let endpoint = "/oauth/token"
     + "?client_id=\(Constants.accessKey)"
     + "&&client_secret=\(Constants.secretKey)"
@@ -81,6 +81,7 @@ final class OAuth2Service {
           self.completeAll(for: code, result: .success(tokenResponse.access_token))
         case .failure(let error):
           print("[fetchOAuthToken]: Ошибка сети - \(error.localizedDescription), Code: \(code)")
+          self.handleNetworkError(error)
           self.completeAll(for: code, result: .failure(error))
         }
       }
@@ -101,15 +102,33 @@ final class OAuth2Service {
   // MARK: - Error Handling
   
   private func handleNetworkError(_ error: Error) {
-    switch error {
-    case let NetworkError.httpStatusCode(statusCode):
-      print("statusCode mistake \(statusCode)")
-    case let NetworkError.urlRequestError(urlError):
-      print("urlRequest mistake \(urlError)")
-    case NetworkError.urlSessionError:
-      print("urlSession mistake")
-    default:
-      print("Unknown mistake")
+    if let urlError = error as? URLError {
+      print("Ошибка запроса URL: \(urlError)")
+    } else if let decodingError = error as? DecodingError {
+      print("Ошибка декодирования: \(decodingError.localizedDescription)")
+      switch decodingError {
+      case .typeMismatch(let type, let context):
+        print("Несоответствие типа \(type) в \(context)")
+      case .valueNotFound(let value, let context):
+        print("Значение \(value) не найдено в \(context)")
+      case .keyNotFound(let key, let context):
+        print("Ключ \(key) не найден в \(context)")
+      case .dataCorrupted(let context):
+        print("Данные повреждены: \(context)")
+      @unknown default:
+        print("Неизвестная ошибка декодирования")
+      }
+    } else if let httpError = error as? NetworkError {
+      switch httpError {
+      case .httpStatusCode(let statusCode):
+        print("Ошибка HTTP со статусом: \(statusCode)")
+      case .urlSessionError:
+        print("Ошибка сессии URL")
+      default:
+        print("Неизвестная ошибка сети")
+      }
+    } else {
+      print("Неизвестная ошибка: \(error)")
     }
   }
 }
