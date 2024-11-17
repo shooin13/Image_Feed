@@ -49,7 +49,7 @@ final class SplashViewController: UIViewController {
           case .success(let imageURL):
             print("URL аватара: \(imageURL)")
           case .failure(let error):
-            print("Не удалось загрузить URL аватара: \(error)")
+            print("Не удалось загрузить URL аватара: \(error.localizedDescription)")
           }
         }
         self.switchToTabBarViewController()

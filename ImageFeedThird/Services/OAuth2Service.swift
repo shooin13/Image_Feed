@@ -4,7 +4,6 @@ import Foundation
 
 enum AuthServiceError: Error {
   case invalidRequest
-  case requestInProgress
 }
 
 // MARK: - OAuth2Service

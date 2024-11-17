@@ -139,14 +139,14 @@ extension WebViewViewController: WKNavigationDelegate {
                decidePolicyFor navigationAction: WKNavigationAction,
                decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
     
-    print("ITS LIT", navigationAction.request.url)
+    print("Запрос авторизации в процессе: \(String(describing: navigationAction.request.url))")
     
     if let code = code(from: navigationAction) {
-      print("nav stopped")
+      print("Авторизация остановлена")
       decisionHandler(.cancel)
       delegate?.webViewViewController(self, didAuthenticateWithCode: code)
     } else {
-      print("nav allowed")
+      print("Авторизация разрешена")
       decisionHandler(.allow)
     }
   }

@@ -13,7 +13,7 @@ enum Constants {
     if let url = URL(string: "https://api.unsplash.com/") {
       return url
     } else {
-      fatalError("Invalid URL")
+      fatalError("Ошибка: недопустимый URL")
     }
   }()
   

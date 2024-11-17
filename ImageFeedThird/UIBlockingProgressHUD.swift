@@ -15,14 +15,14 @@ final class UIBlockingProgressHUD {
   
   static func show() {
     window?.isUserInteractionEnabled = false
-    print("UI Blocked")
+    print("UI заблокирован")
     ProgressHUD.animationType = .circleRotateChase
     ProgressHUD.animate()
   }
   
   static func dismiss() {
     window?.isUserInteractionEnabled = true
-    print("UI UNblocked")
+    print("UI разблокирован")
     ProgressHUD.dismiss()
   }
   

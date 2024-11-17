@@ -83,15 +83,15 @@ extension AuthViewController: WebViewViewControllerDelegate {
       
       switch result {
       case .success(let token):
-        print("token obtained \(token)")
+        print("Токен получен \(token)")
         self.delegate?.didAuthenticate(self)
         viewController.dismiss(animated: true) {
           let tabBarController = TabBarController()
-            tabBarController.modalPresentationStyle = .fullScreen
-            self.present(tabBarController, animated: true)
+          tabBarController.modalPresentationStyle = .fullScreen
+          self.present(tabBarController, animated: true)
         }
       case .failure(let error):
-        print("auth token not obtained \(error)")
+        print("Не удалось получить токен: \(error.localizedDescription)")
         let alert = UIAlertController(title: "Ошибка", message: "Не удалось получить токен: \(error.localizedDescription)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "ОК", style: .default))
         self.present(alert, animated: true)
@@ -101,11 +101,11 @@ extension AuthViewController: WebViewViewControllerDelegate {
   
   
   func webViewViewControllerDidCancel(_ viewController: WebViewViewController) {
-    print("authVC cancelled")
+    print("Авторизация отменена")
     viewController.dismiss(animated: true)
   }
 }
 
 protocol AuthViewControllerDelegate: AnyObject {
-    func didAuthenticate(_ vc: AuthViewController)
+  func didAuthenticate(_ vc: AuthViewController)
 }

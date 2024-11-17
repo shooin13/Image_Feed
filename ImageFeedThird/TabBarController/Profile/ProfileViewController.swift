@@ -105,41 +105,38 @@ final class ProfileViewController: UIViewController {
   private func updateAvatar() {
     guard let profileImageURL = ProfileImageService.shared.avatarURL,
           let url = URL(string: profileImageURL) else {
-      print("Invalid avatar URL.")
+      print("Неверный URL для аватара.")
       return
     }
     
     profileImageView.kf.indicatorType = .activity
     
-    if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-      profileImageView.kf.setImage(
-        with: url,
-        placeholder: UIImage(named: "Placeholder"),
-        options: [
-          .targetCache(Constants.avatarImageCache),
-          .transition(.fade(0.3))
-        ]
-      ) { result in
-        switch result {
-        case .success(let value):
-          print("Avatar updated: \(value.image)")
-        case .failure(let error):
-          print("Error updating avatar: \(error.localizedDescription)")
-        }
+    profileImageView.kf.setImage(
+      with: url,
+      placeholder: UIImage(named: "Placeholder"),
+      options: [
+        .targetCache(Constants.avatarImageCache),
+        .transition(.fade(0.3))
+      ]
+    ) { result in
+      switch result {
+      case .success(let value):
+        print("Аватар обновлен: \(value.image)")
+      case .failure(let error):
+        print("Ошибка при обновлении аватара: \(error.localizedDescription)")
       }
     }
   }
   
   private func updateProfileUI() {
-    
     guard let profile = ProfileService.shared.profile else {
-      print("failed to fetch profile")
+      print("Не удалось загрузить профиль.")
       return
     }
     profileName.text = profile.name
     profileNick.text = profile.loginName
     profileDescription.text = profile.bio
-    print("Profile UI Updated")
+    print("Интерфейс профиля обновлен")
   }
   
   //MARK: - Actions
