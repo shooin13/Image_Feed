@@ -55,8 +55,8 @@ final class SplashViewController: UIViewController {
         self.switchToTabBarViewController()
         
       case .failure(let error):
-        print("Не удалось загрузить профиль: \(error)")
-        self.presentErrorAlert(message: "Не удалось загрузить профиль")
+        print("Не удалось войти в систему: \(error)")
+        self.presentErrorAlert(message: "Не удалось войти в систему")
       }
     }
   }

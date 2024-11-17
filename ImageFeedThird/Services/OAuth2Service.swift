@@ -76,8 +76,8 @@ final class OAuth2Service {
         switch result {
         case .success(let tokenResponse):
           let tokenStorage = OAuth2TokenStorage()
-          tokenStorage.token = tokenResponse.access_token
-          self.completeAll(for: code, result: .success(tokenResponse.access_token))
+          tokenStorage.token = tokenResponse.accessToken
+          self.completeAll(for: code, result: .success(tokenResponse.accessToken))
         case .failure(let error):
           print("[fetchOAuthToken]: Ошибка сети - \(error.localizedDescription), Code: \(code)")
           self.handleNetworkError(error)

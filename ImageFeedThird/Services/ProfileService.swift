@@ -93,7 +93,7 @@ final class ProfileService {
   // MARK: - Convert ProfileResult to Profile
   
   private func convertToProfile(from profileResult: ProfileResult) -> Profile {
-    let name = "\(profileResult.first_name) \(profileResult.last_name)"
+    let name = "\(profileResult.firstName) \(profileResult.lastName)"
     let loginName = "@\(profileResult.username)"
     
     return Profile(
