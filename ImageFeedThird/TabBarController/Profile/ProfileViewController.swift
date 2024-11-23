@@ -63,11 +63,22 @@ final class ProfileViewController: UIViewController {
     setupConstraints()
     updateAvatar()
     updateProfileUI()
+    
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(updateProfileUI),
+      name: ProfileImageService.didChangeNotification,
+      object: nil
+    )
   }
   
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
+  }
+  
+  deinit {
+    NotificationCenter.default.removeObserver(self)
   }
   
   // MARK: - UI Setup
@@ -128,7 +139,7 @@ final class ProfileViewController: UIViewController {
     }
   }
   
-  private func updateProfileUI() {
+  @objc private func updateProfileUI() {
     guard let profile = ProfileService.shared.profile else {
       print("Не удалось загрузить профиль.")
       return

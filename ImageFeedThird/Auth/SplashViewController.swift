@@ -44,6 +44,8 @@ final class SplashViewController: UIViewController {
       case .success(let profile):
         print("Профиль загружен: \(profile)")
         
+        NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self)
+        
         ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { result in
           switch result {
           case .success(let imageURL):
@@ -73,7 +75,9 @@ final class SplashViewController: UIViewController {
     let notAuthorizedUserVC = AuthViewController()
     notAuthorizedUserVC.delegate = self
     notAuthorizedUserVC.modalPresentationStyle = .fullScreen
-    self.present(notAuthorizedUserVC, animated: true)
+    DispatchQueue.main.async {
+      self.present(notAuthorizedUserVC, animated: true)
+    }
   }
   
   private func presentErrorAlert(message: String) {
