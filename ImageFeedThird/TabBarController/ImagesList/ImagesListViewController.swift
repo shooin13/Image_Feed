@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 // MARK: - ImagesListViewController
 
@@ -6,7 +7,9 @@ class ImagesListViewController: UIViewController {
   
   // MARK: - Properties
   
-  private let photosName: [String] = Array(0..<20).map{"\($0)"}
+  private let imagesListService = ImagesListService()
+  private var photos: [Photo] = []
+  private var isFetchingNextPage = false
   
   private lazy var dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -20,7 +23,8 @@ class ImagesListViewController: UIViewController {
   private let tableView: UITableView = {
     let tableView = UITableView()
     tableView.translatesAutoresizingMaskIntoConstraints = false
-    tableView.rowHeight = 200
+    tableView.rowHeight = UITableView.automaticDimension
+    tableView.estimatedRowHeight = 200
     tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     tableView.backgroundColor = UIColor(named: "YPBlack")
     return tableView
@@ -32,9 +36,26 @@ class ImagesListViewController: UIViewController {
     super.viewDidLoad()
     setupTableView()
     setupConstraints()
+    setupObservers()
+    imagesListService.fetchPhotosNextPage()
   }
   
-  // MARK: - Setup Methods
+  deinit {
+    NotificationCenter.default.removeObserver(self)
+  }
+  
+  // MARK: - Setup Observers
+  
+  private func setupObservers() {
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(updateTableViewAnimated),
+      name: ImagesListService.didChangeNotification,
+      object: nil
+    )
+  }
+  
+  // MARK: - Setup TableView
   
   private func setupTableView() {
     tableView.dataSource = self
@@ -52,25 +73,19 @@ class ImagesListViewController: UIViewController {
     ])
   }
   
-  // MARK: - Cell Configuration
+  // MARK: - Update TableView
   
-  private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-    guard let image = UIImage(named: "\(photosName[indexPath.row])") else { return }
-    cell.cellImage.image = image
-    configureGradient(for: cell)
-    cell.cellLabel.text = dateFormatter.string(from: Date())
-    cell.cellButton.setTitle("", for: .normal)
-    let isLiked = indexPath.row % 2 == 0
-    let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
-    cell.cellButton.setImage(likeImage, for: .normal)
-  }
-  
-  private func configureGradient(for cell: ImagesListCell) {
-    let view = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
-    let gradient = CAGradientLayer()
-    gradient.frame = view.bounds
-    gradient.colors = [UIColor.white.cgColor, UIColor.black.cgColor]
-    view.layer.insertSublayer(gradient, at: 0)
+  @objc private func updateTableViewAnimated() {
+    let oldCount = photos.count
+    let newCount = imagesListService.photos.count
+    photos = imagesListService.photos
+    isFetchingNextPage = false
+    if oldCount != newCount {
+      tableView.performBatchUpdates {
+        let indexPaths = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
+        tableView.insertRows(at: indexPaths, with: .automatic)
+      } completion: { _ in }
+    }
   }
 }
 
@@ -78,7 +93,7 @@ class ImagesListViewController: UIViewController {
 
 extension ImagesListViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return photosName.count
+    return photos.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -88,7 +103,30 @@ extension ImagesListViewController: UITableViewDataSource {
       return UITableViewCell()
     }
     
-    configCell(for: imageListCell, with: indexPath)
+    let photo = photos[indexPath.row]
+    let thumbURL = URL(string: photo.thumbImageURL) // URL для загрузки эскиза
+    
+    // Настраиваем индикатор загрузки
+    imageListCell.cellImage.kf.indicatorType = .activity
+    
+    // Загружаем эскиз изображения
+    imageListCell.cellImage.kf.setImage(
+      with: thumbURL,
+      placeholder: UIImage(named: "ImageListCellPlaceholder"),
+      options: [.transition(.fade(0.3))]
+    ) { [weak self] result in
+      guard let self = self else { return }
+      switch result {
+      case .success:
+        // Перегружаем высоту ячейки
+        tableView.beginUpdates()
+        tableView.endUpdates()
+      case .failure(let error):
+        print("Ошибка загрузки изображения: \(error.localizedDescription)")
+      }
+    }
+    
+    imageListCell.cellLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
     
     return imageListCell
   }
@@ -97,27 +135,20 @@ extension ImagesListViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension ImagesListViewController: UITableViewDelegate {
+  func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    if indexPath.row == photos.count - 1 && !isFetchingNextPage {
+      isFetchingNextPage = true
+      imagesListService.fetchPhotosNextPage()
+    }
+  }
+  
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let photo = photos[indexPath.row]
+    let largeURL = URL(string: photo.largeImageURL)
     
     let singleImageVC = SingleImageViewController()
-    
-    singleImageVC.image = UIImage(named: photosName[indexPath.row])
-    
+    singleImageVC.imageURL = largeURL
     singleImageVC.modalPresentationStyle = .fullScreen
     present(singleImageVC, animated: true)
-  }
-  
-  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    guard let image = UIImage(named: "\(indexPath.row)") else { return 200 }
-    let imageWidth = Double(image.size.width)
-    let imageHeight = Double(image.size.height)
-    let viewWidth = Double(tableView.frame.size.width) - (16 * 2)
-    let viewHeight = (viewWidth / imageWidth) * imageHeight
-    
-    return CGFloat(viewHeight)
-  }
-  
-  func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-    
   }
 }

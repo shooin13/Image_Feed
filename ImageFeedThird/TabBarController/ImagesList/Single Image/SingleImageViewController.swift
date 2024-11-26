@@ -1,4 +1,6 @@
 import UIKit
+import Kingfisher
+import ProgressHUD
 
 // MARK: - SingleImageViewController
 
@@ -6,13 +8,10 @@ final class SingleImageViewController: UIViewController {
   
   // MARK: - Properties
   
-  var image: UIImage? {
+  var imageURL: URL? {
     didSet {
-      guard isViewLoaded, let image = image else { return }
-      imageView.image = image
-      imageView.frame.size = image.size
-      rescaleImage()
-      centerImage()
+      guard isViewLoaded else { return }
+      loadImage()
     }
   }
   
@@ -55,16 +54,11 @@ final class SingleImageViewController: UIViewController {
     setupConstraints()
     prepareScrollView()
     
-    // Добавляем действия для кнопок
     backButton.addTarget(self, action: #selector(backButtonDidTap), for: .touchUpInside)
     shareButton.addTarget(self, action: #selector(shareButtonDidTap), for: .touchUpInside)
     
-    // Устанавливаем изображение, если оно уже было назначено
-    if let image = image {
-      imageView.image = image
-      imageView.frame.size = image.size
-      rescaleImage()
-      centerImage()
+    if let _ = imageURL {
+      loadImage()
     }
   }
   
@@ -80,19 +74,17 @@ final class SingleImageViewController: UIViewController {
   
   private func setupConstraints() {
     NSLayoutConstraint.activate([
-      // Scroll View Constraints
+
       scrollView.topAnchor.constraint(equalTo: view.topAnchor),
       scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
       scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
       scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
       
-      // Back Button Constraints
       backButton.widthAnchor.constraint(equalToConstant: 44),
       backButton.heightAnchor.constraint(equalTo: backButton.widthAnchor),
       backButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
       backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
       
-      // Share Button Constraints
       shareButton.widthAnchor.constraint(equalToConstant: 44),
       shareButton.heightAnchor.constraint(equalTo: shareButton.widthAnchor),
       shareButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -104,6 +96,31 @@ final class SingleImageViewController: UIViewController {
     scrollView.delegate = self
     rescaleImage()
     centerImage()
+  }
+  
+  // MARK: - Load Image
+  
+  private func loadImage() {
+    guard let url = imageURL else { return }
+    
+    UIBlockingProgressHUD.show()
+    
+    imageView.kf.setImage(
+      with: url,
+      options: [.transition(.fade(0.3))]
+    ) { [weak self] result in
+      UIBlockingProgressHUD.dismiss()
+      
+      guard let self = self else { return }
+      switch result {
+      case .success(let value):
+        print("Изображение загружено: \(value.image)")
+        self.rescaleImage()
+        self.centerImage()
+      case .failure(let error):
+        print("Ошибка загрузки изображения: \(error.localizedDescription)")
+      }
+    }
   }
   
   // MARK: - Actions
