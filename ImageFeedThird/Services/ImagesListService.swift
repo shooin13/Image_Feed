@@ -4,6 +4,12 @@ import Foundation
 
 final class ImagesListService {
   
+  // MARK: - Shared Instance
+  
+  static let shared = ImagesListService()
+  
+  private init() {}
+  
   // MARK: - Notifications
   
   static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
@@ -15,7 +21,7 @@ final class ImagesListService {
   private var isLoading: Bool = false
   private let urlSession: URLSession = .shared
   
-  // MARK: - Fetch Photos
+  // MARK: - Public Methods
   
   func fetchPhotosNextPage() {
     guard !isLoading else { return }
@@ -53,7 +59,7 @@ final class ImagesListService {
     task.resume()
   }
   
-  // MARK: - Request Creation
+  // MARK: - Private Methods
   
   private func makeFetchPhotosRequest(page: Int) -> URLRequest? {
     guard let url = URL(string: "https://api.unsplash.com/photos?page=\(page)&per_page=10") else {
@@ -70,8 +76,6 @@ final class ImagesListService {
     request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
     return request
   }
-  
-  // MARK: - Convert PhotoResult to Photo
   
   private func convertToPhoto(from photoResult: PhotoResult) -> Photo {
     let size = CGSize(width: photoResult.width, height: photoResult.height)

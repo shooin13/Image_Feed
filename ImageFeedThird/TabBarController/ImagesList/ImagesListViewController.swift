@@ -7,7 +7,7 @@ class ImagesListViewController: UIViewController {
   
   // MARK: - Properties
   
-  private let imagesListService = ImagesListService()
+  private let imagesListService = ImagesListService.shared
   private var photos: [Photo] = []
   private var isFetchingNextPage = false
   

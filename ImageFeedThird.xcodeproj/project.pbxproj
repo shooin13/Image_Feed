@@ -146,11 +146,11 @@
 		577F23982CB0877100A6EF9D /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				572E5CB52CF61662003FE7B1 /* ImagesListService.swift */,
 				57E029652CC5C4420000178E /* ProfileImageService.swift */,
 				57E0295F2CC5704A0000178E /* ProfileService.swift */,
 				577F23962CB0834B00A6EF9D /* OAuth2Service.swift */,
 				577F23A42CB3122B00A6EF9D /* OAuth2TokenStorage.swift */,
+				572E5CB52CF61662003FE7B1 /* ImagesListService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";

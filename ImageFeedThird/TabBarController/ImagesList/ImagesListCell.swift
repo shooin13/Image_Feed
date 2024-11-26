@@ -3,6 +3,8 @@ import UIKit
 // MARK: - ImagesListCell
 
 final class ImagesListCell: UITableViewCell {
+  // MARK: - Static Properties
+  
   static let reuseIdentifier = "ImagesListCell"
   
   // MARK: - UI Elements
@@ -29,6 +31,7 @@ final class ImagesListCell: UITableViewCell {
   let cellButton: UIButton = {
     let button = UIButton()
     button.translatesAutoresizingMaskIntoConstraints = false
+    button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     return button
   }()
   
@@ -52,6 +55,19 @@ final class ImagesListCell: UITableViewCell {
     fatalError("init(coder:) has not been implemented")
   }
   
+  // MARK: - Lifecycle
+  
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    updateGradientFrame()
+  }
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    gradientLayer.opacity = 0
+    cellLabel.alpha = 0
+  }
+  
   // MARK: - Setup Methods
   
   private func setupViews() {
@@ -64,16 +80,22 @@ final class ImagesListCell: UITableViewCell {
     self.selectionStyle = .none
   }
   
-  override func layoutSubviews() {
-    super.layoutSubviews()
-    updateGradientFrame()
+  private func setupConstraints() {
+    NSLayoutConstraint.activate([
+      cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+      cellImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+      cellImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
+      cellImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+      
+      cellLabel.leadingAnchor.constraint(equalTo: cellImage.leadingAnchor, constant: 8),
+      cellLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+      
+      cellButton.trailingAnchor.constraint(equalTo: cellImage.trailingAnchor, constant: -8),
+      cellButton.topAnchor.constraint(equalTo: cellImage.topAnchor, constant: 8)
+    ])
   }
   
-  override func prepareForReuse() {
-    super.prepareForReuse()
-    gradientLayer.opacity = 0
-    cellLabel.alpha = 0
-  }
+  // MARK: - Gradient Methods
   
   func updateGradientFrame() {
     gradientLayer.frame = CGRect(
@@ -91,18 +113,9 @@ final class ImagesListCell: UITableViewCell {
     }
   }
   
-  private func setupConstraints() {
-    NSLayoutConstraint.activate([
-      cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-      cellImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-      cellImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-      cellImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
-      
-      cellLabel.leadingAnchor.constraint(equalTo: cellImage.leadingAnchor, constant: 8),
-      cellLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-      
-      cellButton.trailingAnchor.constraint(equalTo: cellImage.trailingAnchor, constant: -8),
-      cellButton.topAnchor.constraint(equalTo: cellImage.topAnchor, constant: 8)
-    ])
+  // MARK: - Actions
+  
+  @objc private func buttonTapped() {
+    print("Нажата кнопка лайк")
   }
 }
