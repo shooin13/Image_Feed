@@ -5,14 +5,14 @@ import UIKit
 final class SplashViewController: UIViewController {
   
   // MARK: - Properties
-  
   private let storage = OAuth2TokenStorage()
+  private let profileService = ProfileService.shared
+  private let profileImageService = ProfileImageService.shared
   
   // MARK: - View Lifecycle
-  
   override func viewDidLoad() {
     super.viewDidLoad()
-    print("authVC loaded")
+    print("Экран загрузки загружен")
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -24,35 +24,79 @@ final class SplashViewController: UIViewController {
   
   private func checkIfUserIsAuthorized() {
     if let token = storage.token {
-      switchToTabBarViewController()
+      fetchProfile(token: token)
     } else {
       presentNotAuthorizedViewController()
     }
   }
   
-  private func switchToTabBarViewController() {
-    print("authorized")
-    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-    if let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarControllerID") as? UITabBarController {
-      tabBarController.modalPresentationStyle = .fullScreen
-      self.present(tabBarController, animated: true)
+  // MARK: - Fetch Profile
+  
+  private func fetchProfile(token: String) {
+    UIBlockingProgressHUD.show()
+    
+    profileService.fetchProfile { [weak self] result in
+      UIBlockingProgressHUD.dismiss()
+      
+      guard let self = self else { return }
+      
+      switch result {
+      case .success(let profile):
+        print("Профиль загружен: \(profile)")
+        
+        NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self)
+        
+        ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { result in
+          switch result {
+          case .success(let imageURL):
+            print("URL аватара: \(imageURL)")
+          case .failure(let error):
+            print("Не удалось загрузить URL аватара: \(error.localizedDescription)")
+          }
+        }
+        self.switchToTabBarViewController()
+        
+      case .failure(let error):
+        print("Не удалось войти в систему: \(error)")
+        self.presentErrorAlert(message: "Не удалось войти в систему")
+      }
     }
   }
   
+  // MARK: - Navigation
+  
+  private func switchToTabBarViewController() {
+    let tabBarController = TabBarController()
+    tabBarController.modalPresentationStyle = .fullScreen
+    self.present(tabBarController, animated: true)
+  }
+  
   private func presentNotAuthorizedViewController() {
-    print("not authorized")
     let notAuthorizedUserVC = AuthViewController()
     notAuthorizedUserVC.delegate = self
     notAuthorizedUserVC.modalPresentationStyle = .fullScreen
-    self.present(notAuthorizedUserVC, animated: true)
+    DispatchQueue.main.async {
+      self.present(notAuthorizedUserVC, animated: true)
+    }
   }
   
+  private func presentErrorAlert(message: String) {
+    let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+    alert.addAction(UIAlertAction(title: "ОК", style: .default))
+    self.present(alert, animated: true, completion: nil)
+  }
 }
 
+// MARK: - AuthViewControllerDelegate
 extension SplashViewController: AuthViewControllerDelegate {
+  
   func didAuthenticate(_ vc: AuthViewController) {
-    print("authenticated")
-    vc.dismiss(animated: true)
-    switchToTabBarViewController()
+    vc.dismiss(animated: true) {
+      guard let token = self.storage.token else {
+        print("Токен отсутствует после авторизации")
+        return
+      }
+      self.fetchProfile(token: token)
+    }
   }
 }

@@ -1,4 +1,5 @@
 import Foundation
+import SwiftKeychainWrapper
 
 // MARK: - OAuth2TokenStorage
 
@@ -6,19 +7,23 @@ final class OAuth2TokenStorage {
   
   // MARK: - Properties
   
-  private let userDefaults = UserDefaults.standard
   private let tokenKey = "BearerToken"
   
   // MARK: - Token Management
   
   var token: String? {
     get {
-      print("token get")
-      return userDefaults.string(forKey: tokenKey)
+      print("Получение токена из хранилища")
+      return KeychainWrapper.standard.string(forKey: tokenKey)
     }
     set {
-      print("token set")
-      userDefaults.setValue(newValue, forKey: tokenKey)
+      if let newValue = newValue {
+        print("Сохранение токена в хранилище")
+        KeychainWrapper.standard.set(newValue, forKey: tokenKey)
+      } else {
+        print("Удаление токена из хранилища")
+        KeychainWrapper.standard.removeObject(forKey: tokenKey)
+      }
     }
   }
 }
