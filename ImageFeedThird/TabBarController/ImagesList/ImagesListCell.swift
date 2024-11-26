@@ -22,6 +22,7 @@ final class ImagesListCell: UITableViewCell {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
     label.textColor = .white
+    label.alpha = 0
     return label
   }()
   
@@ -35,6 +36,7 @@ final class ImagesListCell: UITableViewCell {
     let gradient = CAGradientLayer()
     gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.7).cgColor]
     gradient.locations = [0.0, 1.0]
+    gradient.opacity = 0
     return gradient
   }()
   
@@ -60,8 +62,6 @@ final class ImagesListCell: UITableViewCell {
     
     self.backgroundColor = UIColor(named: "YPBlack")
     self.selectionStyle = .none
-    
-    updateGradientFrame()
   }
   
   override func layoutSubviews() {
@@ -71,23 +71,35 @@ final class ImagesListCell: UITableViewCell {
   
   override func prepareForReuse() {
     super.prepareForReuse()
-    updateGradientFrame()
+    gradientLayer.opacity = 0
+    cellLabel.alpha = 0
   }
   
-  private func updateGradientFrame() {
-    gradientLayer.frame = CGRect(x: 0, y: cellImage.bounds.height - 50, width: cellImage.bounds.width, height: 50)
+  func updateGradientFrame() {
+    gradientLayer.frame = CGRect(
+      x: 0,
+      y: contentView.bounds.height - 50,
+      width: contentView.bounds.width,
+      height: 50
+    )
+  }
+  
+  func showGradientAndLabel() {
+    UIView.animate(withDuration: 0.3) {
+      self.gradientLayer.opacity = 1
+      self.cellLabel.alpha = 1
+    }
   }
   
   private func setupConstraints() {
     NSLayoutConstraint.activate([
-      
       cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
       cellImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
       cellImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
       cellImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
       
       cellLabel.leadingAnchor.constraint(equalTo: cellImage.leadingAnchor, constant: 8),
-      cellLabel.bottomAnchor.constraint(equalTo: cellImage.bottomAnchor, constant: -8),
+      cellLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
       
       cellButton.trailingAnchor.constraint(equalTo: cellImage.trailingAnchor, constant: -8),
       cellButton.topAnchor.constraint(equalTo: cellImage.topAnchor, constant: 8)

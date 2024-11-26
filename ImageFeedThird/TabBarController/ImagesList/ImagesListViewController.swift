@@ -104,12 +104,10 @@ extension ImagesListViewController: UITableViewDataSource {
     }
     
     let photo = photos[indexPath.row]
-    let thumbURL = URL(string: photo.thumbImageURL) // URL для загрузки эскиза
+    let thumbURL = URL(string: photo.thumbImageURL)
     
-    // Настраиваем индикатор загрузки
     imageListCell.cellImage.kf.indicatorType = .activity
     
-    // Загружаем эскиз изображения
     imageListCell.cellImage.kf.setImage(
       with: thumbURL,
       placeholder: UIImage(named: "ImageListCellPlaceholder"),
@@ -118,9 +116,13 @@ extension ImagesListViewController: UITableViewDataSource {
       guard let self = self else { return }
       switch result {
       case .success:
-        // Перегружаем высоту ячейки
-        tableView.beginUpdates()
-        tableView.endUpdates()
+        
+        UIView.animate(withDuration: 0.3) {
+          self.tableView.beginUpdates()
+          self.tableView.endUpdates()
+        }
+        
+        imageListCell.showGradientAndLabel()
       case .failure(let error):
         print("Ошибка загрузки изображения: \(error.localizedDescription)")
       }
