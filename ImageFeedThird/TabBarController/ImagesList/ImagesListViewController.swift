@@ -116,4 +116,10 @@ extension ImagesListViewController: UITableViewDelegate {
     
     return CGFloat(viewHeight)
   }
+  
+  func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    <#code#>
+  }
+  L
+  
 }
