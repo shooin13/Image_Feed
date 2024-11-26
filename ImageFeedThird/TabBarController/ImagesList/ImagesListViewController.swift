@@ -116,12 +116,10 @@ extension ImagesListViewController: UITableViewDataSource {
       guard let self = self else { return }
       switch result {
       case .success:
-        
         UIView.animate(withDuration: 0.3) {
           self.tableView.beginUpdates()
           self.tableView.endUpdates()
         }
-        
         imageListCell.showGradientAndLabel()
       case .failure(let error):
         print("Ошибка загрузки изображения: \(error.localizedDescription)")
@@ -130,8 +128,13 @@ extension ImagesListViewController: UITableViewDataSource {
     
     imageListCell.cellLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
     
+    let isLiked = indexPath.row % 2 != 0
+    let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
+    imageListCell.cellButton.setImage(likeImage, for: .normal)
+    
     return imageListCell
   }
+  
 }
 
 // MARK: - UITableViewDelegate
