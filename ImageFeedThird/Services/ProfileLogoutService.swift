@@ -27,18 +27,18 @@ final class ProfileLogoutService {
         WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
       }
     }
-    print("Cookies and website data cleared")
+    print("Файлы cookie и данные сайтов очищены")
   }
   
   private func resetServices() {
     ProfileService.shared.resetProfile()
     ProfileImageService.shared.resetAvatarURL()
     ImagesListService.shared.resetPhotos()
-    print("Services reset completed")
+    print("Сброс сервисов завершен")
   }
   
   private func clearToken() {
     OAuth2TokenStorage().token = nil
-    print("Token cleared")
+    print("Токен очищен")
   }
 }

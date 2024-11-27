@@ -74,7 +74,7 @@ final class SingleImageViewController: UIViewController {
   
   private func setupConstraints() {
     NSLayoutConstraint.activate([
-
+      
       scrollView.topAnchor.constraint(equalTo: view.topAnchor),
       scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
       scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
