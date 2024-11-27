@@ -25,6 +25,7 @@ final class ImagesListCell: UITableViewCell {
     label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
     label.textColor = .white
     label.text = ""
+    label.isHidden = true
     return label
   }()
   
@@ -32,6 +33,7 @@ final class ImagesListCell: UITableViewCell {
     let button = UIButton()
     button.translatesAutoresizingMaskIntoConstraints = false
     button.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
+    button.isHidden = true
     return button
   }()
   
@@ -87,9 +89,10 @@ final class ImagesListCell: UITableViewCell {
     contentView.addSubview(cellButton)
     cellImage.layer.addSublayer(gradientLayer)
     cellImage.layer.addSublayer(bottomGradientLayer)
-    
     backgroundColor = UIColor(named: "YPBlack")
     selectionStyle = .none
+    // Установим изначальные размеры градиентов
+    updateGradients()
   }
   
   private func setupConstraints() {
@@ -108,12 +111,11 @@ final class ImagesListCell: UITableViewCell {
   }
   
   private func updateGradients() {
-    let placeholderHeight: CGFloat = 200
-    gradientLayer.frame = CGRect(x: 0, y: 0, width: contentView.bounds.width, height: placeholderHeight)
+    gradientLayer.frame = cellImage.bounds
     bottomGradientLayer.frame = CGRect(
       x: 0,
-      y: contentView.bounds.height - 50,
-      width: contentView.bounds.width,
+      y: cellImage.bounds.height - 50,
+      width: cellImage.bounds.width,
       height: 50
     )
   }
@@ -136,6 +138,8 @@ final class ImagesListCell: UITableViewCell {
   
   func setImage(with url: URL?) {
     showGradientAnimation()
+    updateUIElementsVisibility(isImageLoaded: false)
+    
     cellImage.kf.setImage(
       with: url,
       placeholder: UIImage(named: "ImageListCellPlaceholder"),
@@ -145,12 +149,20 @@ final class ImagesListCell: UITableViewCell {
       switch result {
       case .success:
         self.removeGradientAnimation()
+        self.updateUIElementsVisibility(isImageLoaded: true)
         self.delegate?.imageListCellDidUpdateHeight(self)
       case .failure:
         self.removeGradientAnimation()
         print("Ошибка загрузки изображения")
       }
     }
+  }
+  
+  // MARK: - UI Visibility Methods
+  private func updateUIElementsVisibility(isImageLoaded: Bool) {
+    cellLabel.isHidden = !isImageLoaded
+    cellButton.isHidden = !isImageLoaded
+    bottomGradientLayer.opacity = isImageLoaded ? 1 : 0
   }
   
   // MARK: - Methods to update UI
