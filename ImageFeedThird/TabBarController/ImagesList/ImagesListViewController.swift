@@ -145,26 +145,39 @@ extension ImagesListViewController: UITableViewDelegate {
 // MARK: - ImagesListCellDelegate
 
 extension ImagesListViewController: ImagesListCellDelegate {
+  
   func imageListCellDidTapLike(_ cell: ImagesListCell) {
     guard let indexPath = tableView.indexPath(for: cell) else { return }
-    let photo = photos[indexPath.row]
+    var photo = photos[indexPath.row]
     
-    guard !isNetworkInteractionInProgress else { return }
-    isNetworkInteractionInProgress = true
+    UIBlockingProgressHUD.show()
+    
     cell.isUserInteractionEnabled = false
     
     imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
       guard let self = self else { return }
-      self.isNetworkInteractionInProgress = false
+      
       DispatchQueue.main.async {
         cell.isUserInteractionEnabled = true
+        
         switch result {
         case .success:
-          self.photos[indexPath.row].isLiked.toggle()
-          cell.setIsLiked(self.photos[indexPath.row].isLiked)
-        case .failure(let error):
-          print("Ошибка смены лайка: \(error.localizedDescription)")
+          photo.isLiked.toggle()
+          self.photos[indexPath.row].isLiked = photo.isLiked
+          
+          cell.setIsLiked(photo.isLiked)
+          
+        case .failure:
+          let alert = UIAlertController(
+            title: "Error",
+            message: "Failed to change like status. Please try again.",
+            preferredStyle: .alert
+          )
+          alert.addAction(UIAlertAction(title: "OK", style: .default))
+          self.present(alert, animated: true)
         }
+        
+        UIBlockingProgressHUD.dismiss()
       }
     }
   }
