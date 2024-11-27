@@ -153,6 +153,13 @@ final class ProfileViewController: UIViewController {
   //MARK: - Actions
   
   @objc private func logoutButtonTapped() {
-    print("logout tapped")
+    ProfileLogoutService.shared.logout()
+    switchToSplashViewController()
+  }
+  
+  private func switchToSplashViewController() {
+    let splashViewController = SplashViewController()
+    splashViewController.modalPresentationStyle = .fullScreen
+    present(splashViewController, animated: true)
   }
 }

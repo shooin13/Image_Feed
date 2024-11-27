@@ -37,6 +37,7 @@
 		57E029642CC571360000178E /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E029632CC571320000178E /* Profile.swift */; };
 		57E029662CC5C4490000178E /* ProfileImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E029652CC5C4420000178E /* ProfileImageService.swift */; };
 		57E029682CC5C4670000178E /* UserResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E029672CC5C4610000178E /* UserResult.swift */; };
+		57EB87D62CF7468D005059A4 /* ProfileLogoutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EB87D52CF7467F005059A4 /* ProfileLogoutService.swift */; };
 		57F0382B2CA1E1470047EB19 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F0382A2CA1E1420047EB19 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +71,7 @@
 		57E029632CC571320000178E /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		57E029652CC5C4420000178E /* ProfileImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageService.swift; sourceTree = "<group>"; };
 		57E029672CC5C4610000178E /* UserResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserResult.swift; sourceTree = "<group>"; };
+		57EB87D52CF7467F005059A4 /* ProfileLogoutService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileLogoutService.swift; sourceTree = "<group>"; };
 		57F0382A2CA1E1420047EB19 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -146,6 +148,7 @@
 		577F23982CB0877100A6EF9D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				57EB87D52CF7467F005059A4 /* ProfileLogoutService.swift */,
 				57E029652CC5C4420000178E /* ProfileImageService.swift */,
 				57E0295F2CC5704A0000178E /* ProfileService.swift */,
 				577F23962CB0834B00A6EF9D /* OAuth2Service.swift */,
@@ -294,6 +297,7 @@
 				578099882CD922CC002972E9 /* TabBarController.swift in Sources */,
 				572E5CAE2CF615E8003FE7B1 /* Photo.swift in Sources */,
 				570741142CC026FC000737AF /* SplashViewController.swift in Sources */,
+				57EB87D62CF7468D005059A4 /* ProfileLogoutService.swift in Sources */,
 				570F50122C897F25007A8DA2 /* AppDelegate.swift in Sources */,
 				577F239E2CB3081700A6EF9D /* URLSession+data.swift in Sources */,
 				570F50142C897F25007A8DA2 /* SceneDelegate.swift in Sources */,

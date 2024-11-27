@@ -62,6 +62,11 @@ final class ProfileService {
     task.resume()
   }
   
+  // MARK: - Reset Profile
+  func resetProfile() {
+    profile = nil
+  }
+  
   // MARK: - Make Request
   
   private func makeProfileRequest() -> URLRequest? {

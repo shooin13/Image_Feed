@@ -54,6 +54,13 @@ final class ImagesListService {
     task.resume()
   }
   
+  // MARK: - Reset Photos
+  func resetPhotos() {
+    photos = []
+    lastLoadedPage = nil
+    isLoading = false
+  }
+  
   func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
     guard let request = makeLikeRequest(photoId: photoId, isLike: isLike) else {
       print("[changeLike]: Ошибка создания запроса")
