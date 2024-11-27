@@ -4,11 +4,12 @@ import UIKit
 
 final class ImagesListCell: UITableViewCell {
   // MARK: - Static Properties
-  
   static let reuseIdentifier = "ImagesListCell"
   
-  // MARK: - UI Elements
+  // MARK: - Delegate
+  weak var delegate: ImagesListCellDelegate?
   
+  // MARK: - UI Elements
   let cellImage: UIImageView = {
     let imageView = UIImageView()
     imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -31,7 +32,7 @@ final class ImagesListCell: UITableViewCell {
   let cellButton: UIButton = {
     let button = UIButton()
     button.translatesAutoresizingMaskIntoConstraints = false
-    button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+    button.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
     return button
   }()
   
@@ -44,7 +45,6 @@ final class ImagesListCell: UITableViewCell {
   }()
   
   // MARK: - Initializer
-  
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
     setupViews()
@@ -56,7 +56,6 @@ final class ImagesListCell: UITableViewCell {
   }
   
   // MARK: - Lifecycle
-  
   override func layoutSubviews() {
     super.layoutSubviews()
     updateGradientFrame()
@@ -69,7 +68,6 @@ final class ImagesListCell: UITableViewCell {
   }
   
   // MARK: - Setup Methods
-  
   private func setupViews() {
     contentView.addSubview(cellImage)
     cellImage.layer.addSublayer(gradientLayer)
@@ -96,7 +94,6 @@ final class ImagesListCell: UITableViewCell {
   }
   
   // MARK: - Gradient Methods
-  
   func updateGradientFrame() {
     gradientLayer.frame = CGRect(
       x: 0,
@@ -113,9 +110,19 @@ final class ImagesListCell: UITableViewCell {
     }
   }
   
-  // MARK: - Actions
-  
-  @objc private func buttonTapped() {
-    print("Нажата кнопка лайк")
+  func setIsLiked(_ isLiked: Bool) {
+    let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
+    cellButton.setImage(likeImage, for: .normal)
   }
+  
+  // MARK: - Actions
+  @objc private func likeButtonClicked() {
+    delegate?.imageListCellDidTapLike(self)
+  }
+}
+
+// MARK: - Delegate Protocol
+
+protocol ImagesListCellDelegate: AnyObject {
+  func imageListCellDidTapLike(_ cell: ImagesListCell)
 }

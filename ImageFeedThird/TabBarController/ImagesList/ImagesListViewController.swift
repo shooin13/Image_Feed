@@ -4,12 +4,11 @@ import Kingfisher
 // MARK: - ImagesListViewController
 
 class ImagesListViewController: UIViewController {
-  
   // MARK: - Properties
-  
   private let imagesListService = ImagesListService.shared
   private var photos: [Photo] = []
   private var isFetchingNextPage = false
+  private var isNetworkInteractionInProgress = false
   
   private lazy var dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -19,7 +18,6 @@ class ImagesListViewController: UIViewController {
   }()
   
   // MARK: - UI Elements
-  
   private let tableView: UITableView = {
     let tableView = UITableView()
     tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -31,7 +29,6 @@ class ImagesListViewController: UIViewController {
   }()
   
   // MARK: - View Lifecycle
-  
   override func viewDidLoad() {
     super.viewDidLoad()
     setupTableView()
@@ -45,7 +42,6 @@ class ImagesListViewController: UIViewController {
   }
   
   // MARK: - Setup Observers
-  
   private func setupObservers() {
     NotificationCenter.default.addObserver(
       self,
@@ -56,7 +52,6 @@ class ImagesListViewController: UIViewController {
   }
   
   // MARK: - Setup TableView
-  
   private func setupTableView() {
     tableView.dataSource = self
     tableView.delegate = self
@@ -74,7 +69,6 @@ class ImagesListViewController: UIViewController {
   }
   
   // MARK: - Update TableView
-  
   @objc private func updateTableViewAnimated() {
     let oldCount = photos.count
     let newCount = imagesListService.photos.count
@@ -112,29 +106,14 @@ extension ImagesListViewController: UITableViewDataSource {
       with: thumbURL,
       placeholder: UIImage(named: "ImageListCellPlaceholder"),
       options: [.transition(.fade(0.3))]
-    ) { [weak self] result in
-      guard let self = self else { return }
-      switch result {
-      case .success:
-        UIView.animate(withDuration: 0.3) {
-          self.tableView.beginUpdates()
-          self.tableView.endUpdates()
-        }
-        imageListCell.showGradientAndLabel()
-      case .failure(let error):
-        print("Ошибка загрузки изображения: \(error.localizedDescription)")
-      }
-    }
+    )
     
     imageListCell.cellLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
-    
-    let isLiked = indexPath.row % 2 != 0
-    let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
-    imageListCell.cellButton.setImage(likeImage, for: .normal)
+    imageListCell.setIsLiked(photo.isLiked)
+    imageListCell.delegate = self
     
     return imageListCell
   }
-  
 }
 
 // MARK: - UITableViewDelegate
@@ -149,11 +128,44 @@ extension ImagesListViewController: UITableViewDelegate {
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let photo = photos[indexPath.row]
-    let largeURL = URL(string: photo.largeImageURL)
+    guard let largeURL = URL(string: photo.largeImageURL) else {
+      print("Некорректный URL для фото")
+      return
+    }
     
+    // Переход к SingleImageViewController
     let singleImageVC = SingleImageViewController()
     singleImageVC.imageURL = largeURL
     singleImageVC.modalPresentationStyle = .fullScreen
     present(singleImageVC, animated: true)
+  }
+  
+}
+
+// MARK: - ImagesListCellDelegate
+
+extension ImagesListViewController: ImagesListCellDelegate {
+  func imageListCellDidTapLike(_ cell: ImagesListCell) {
+    guard let indexPath = tableView.indexPath(for: cell) else { return }
+    let photo = photos[indexPath.row]
+    
+    guard !isNetworkInteractionInProgress else { return }
+    isNetworkInteractionInProgress = true
+    cell.isUserInteractionEnabled = false
+    
+    imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+      guard let self = self else { return }
+      self.isNetworkInteractionInProgress = false
+      DispatchQueue.main.async {
+        cell.isUserInteractionEnabled = true
+        switch result {
+        case .success:
+          self.photos[indexPath.row].isLiked.toggle()
+          cell.setIsLiked(self.photos[indexPath.row].isLiked)
+        case .failure(let error):
+          print("Ошибка смены лайка: \(error.localizedDescription)")
+        }
+      }
+    }
   }
 }

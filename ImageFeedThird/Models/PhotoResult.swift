@@ -1,5 +1,3 @@
-//MARK: - PhotoResult
-
 struct PhotoResult: Decodable {
   let id: String
   let createdAt: String
@@ -26,5 +24,9 @@ struct PhotoResult: Decodable {
     case description
     case urls
   }
+}
+
+struct LikeResponse: Decodable {
+  let photo: PhotoResult
 }
 

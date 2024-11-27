@@ -1,6 +1,4 @@
-import Foundation
-
-// MARK: - ImagesListService
+import UIKit
 
 final class ImagesListService {
   
@@ -11,18 +9,15 @@ final class ImagesListService {
   private init() {}
   
   // MARK: - Notifications
-  
   static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
   
   // MARK: - Properties
-  
   private(set) var photos: [Photo] = []
   private var lastLoadedPage: Int?
   private var isLoading: Bool = false
   private let urlSession: URLSession = .shared
   
   // MARK: - Public Methods
-  
   func fetchPhotosNextPage() {
     guard !isLoading else { return }
     
@@ -66,11 +61,12 @@ final class ImagesListService {
       return
     }
     
-    let task = urlSession.objectTask(for: request) { (result: Result<Data, Error>) in
+    let task = urlSession.objectTask(for: request) { (result: Result<LikeResponse, Error>) in
       DispatchQueue.main.async {
         switch result {
-        case .success:
-          print("[changeLike]: Успешно выполнено изменение лайка для \(photoId)")
+        case .success(let likeResponse):
+          let photo = likeResponse.photo
+          print("[changeLike]: Успешно обновлено состояние лайка для фото ID \(photo.id).")
           completion(.success(()))
         case .failure(let error):
           print("[changeLike]: Ошибка выполнения изменения лайка - \(error.localizedDescription)")
@@ -100,7 +96,9 @@ final class ImagesListService {
   }
   
   private func makeLikeRequest(photoId: String, isLike: Bool) -> URLRequest? {
-    let endpoint = isLike ? "https://api.unsplash.com/photos/\(photoId)/like" : "https://api.unsplash.com/photos/\(photoId)/like"
+    let endpoint = isLike
+    ? "https://api.unsplash.com/photos/\(photoId)/like"
+    : "https://api.unsplash.com/photos/\(photoId)/like"
     
     guard let url = URL(string: endpoint) else {
       assertionFailure("Не удалось создать URL для изменения лайка")
