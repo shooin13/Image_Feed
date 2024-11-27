@@ -24,7 +24,7 @@ final class ImagesListCell: UITableViewCell {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
     label.textColor = .white
-    label.alpha = 0
+    label.text = ""
     return label
   }()
   
@@ -37,9 +37,22 @@ final class ImagesListCell: UITableViewCell {
   
   private let gradientLayer: CAGradientLayer = {
     let gradient = CAGradientLayer()
+    gradient.colors = [
+      UIColor(white: 0.8, alpha: 1).cgColor,
+      UIColor(white: 0.6, alpha: 1).cgColor,
+      UIColor(white: 0.4, alpha: 1).cgColor
+    ]
+    gradient.locations = [0, 0.5, 1]
+    gradient.startPoint = CGPoint(x: 0, y: 0.5)
+    gradient.endPoint = CGPoint(x: 1, y: 0.5)
+    gradient.opacity = 0
+    return gradient
+  }()
+  
+  private let bottomGradientLayer: CAGradientLayer = {
+    let gradient = CAGradientLayer()
     gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.7).cgColor]
     gradient.locations = [0.0, 1.0]
-    gradient.opacity = 0
     return gradient
   }()
   
@@ -48,7 +61,6 @@ final class ImagesListCell: UITableViewCell {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
     setupViews()
     setupConstraints()
-    gradientLayer.opacity = 1
   }
   
   required init?(coder: NSCoder) {
@@ -58,26 +70,23 @@ final class ImagesListCell: UITableViewCell {
   // MARK: - Lifecycle
   override func layoutSubviews() {
     super.layoutSubviews()
-    gradientLayer.frame = CGRect(
-      x: 0,
-      y: contentView.bounds.height - 50,
-      width: contentView.bounds.width,
-      height: 50
-    )
+    updateGradients()
   }
   
   override func prepareForReuse() {
     super.prepareForReuse()
     gradientLayer.opacity = 0
-    cellLabel.alpha = 0
+    gradientLayer.removeAllAnimations()
+    cellLabel.text = ""
   }
   
   // MARK: - Setup Methods
   private func setupViews() {
     contentView.addSubview(cellImage)
-    cellImage.layer.addSublayer(gradientLayer)
     contentView.addSubview(cellLabel)
     contentView.addSubview(cellButton)
+    cellImage.layer.addSublayer(gradientLayer)
+    cellImage.layer.addSublayer(bottomGradientLayer)
     
     backgroundColor = UIColor(named: "YPBlack")
     selectionStyle = .none
@@ -98,17 +107,60 @@ final class ImagesListCell: UITableViewCell {
     ])
   }
   
+  private func updateGradients() {
+    let placeholderHeight: CGFloat = 200
+    gradientLayer.frame = CGRect(x: 0, y: 0, width: contentView.bounds.width, height: placeholderHeight)
+    bottomGradientLayer.frame = CGRect(
+      x: 0,
+      y: contentView.bounds.height - 50,
+      width: contentView.bounds.width,
+      height: 50
+    )
+  }
+  
+  // MARK: - Gradient Animation Methods
+  func showGradientAnimation() {
+    gradientLayer.opacity = 1
+    let animation = CABasicAnimation(keyPath: "locations")
+    animation.fromValue = [0, 0.1, 0.3]
+    animation.toValue = [0.7, 0.9, 1]
+    animation.duration = 1.5
+    animation.repeatCount = .infinity
+    gradientLayer.add(animation, forKey: "locationsChange")
+  }
+  
+  func removeGradientAnimation() {
+    gradientLayer.opacity = 0
+    gradientLayer.removeAllAnimations()
+  }
+  
+  func setImage(with url: URL?) {
+    showGradientAnimation()
+    cellImage.kf.setImage(
+      with: url,
+      placeholder: UIImage(named: "ImageListCellPlaceholder"),
+      options: [.transition(.fade(0.3))]
+    ) { [weak self] result in
+      guard let self = self else { return }
+      switch result {
+      case .success:
+        self.removeGradientAnimation()
+        self.delegate?.imageListCellDidUpdateHeight(self)
+      case .failure:
+        self.removeGradientAnimation()
+        print("Ошибка загрузки изображения")
+      }
+    }
+  }
+  
   // MARK: - Methods to update UI
   func setIsLiked(_ isLiked: Bool) {
     let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
     cellButton.setImage(likeImage, for: .normal)
   }
   
-  func showGradientAndLabel() {
-    UIView.animate(withDuration: 0.3) {
-      self.gradientLayer.opacity = 1
-      self.cellLabel.alpha = 1
-    }
+  func setLabelText(with text: String?) {
+    cellLabel.text = text ?? ""
   }
   
   // MARK: - Actions
@@ -121,4 +173,5 @@ final class ImagesListCell: UITableViewCell {
 
 protocol ImagesListCellDelegate: AnyObject {
   func imageListCellDidTapLike(_ cell: ImagesListCell)
+  func imageListCellDidUpdateHeight(_ cell: ImagesListCell)
 }

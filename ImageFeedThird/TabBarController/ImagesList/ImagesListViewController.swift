@@ -8,7 +8,6 @@ class ImagesListViewController: UIViewController {
   private let imagesListService = ImagesListService.shared
   private var photos: [Photo] = []
   private var isFetchingNextPage = false
-  private var isNetworkInteractionInProgress = false
   
   private lazy var dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -100,20 +99,10 @@ extension ImagesListViewController: UITableViewDataSource {
     let photo = photos[indexPath.row]
     let thumbURL = URL(string: photo.thumbImageURL)
     
-    imageListCell.cellImage.kf.indicatorType = .activity
-    
-    imageListCell.cellImage.kf.setImage(
-      with: thumbURL,
-      placeholder: UIImage(named: "ImageListCellPlaceholder"),
-      options: [.transition(.fade(0.3))]
-    )
-    
-    imageListCell.cellLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
-    imageListCell.setIsLiked(photo.isLiked)
     imageListCell.delegate = self
-    
-    imageListCell.cellLabel.alpha = 1
-    imageListCell.showGradientAndLabel()
+    imageListCell.setLabelText(with: dateFormatter.string(from: photo.createdAt ?? Date()))
+    imageListCell.setImage(with: thumbURL)
+    imageListCell.setIsLiked(photo.isLiked)
     
     return imageListCell
   }
@@ -146,6 +135,14 @@ extension ImagesListViewController: UITableViewDelegate {
 // MARK: - ImagesListCellDelegate
 
 extension ImagesListViewController: ImagesListCellDelegate {
+  func imageListCellDidUpdateHeight(_ cell: ImagesListCell) {
+    DispatchQueue.main.async {
+      guard let indexPath = self.tableView.indexPath(for: cell) else { return }
+      self.tableView.beginUpdates()
+      self.tableView.endUpdates()
+    }
+  }
+  
   func imageListCellDidTapLike(_ cell: ImagesListCell) {
     guard let indexPath = tableView.indexPath(for: cell) else { return }
     var photo = photos[indexPath.row]
@@ -164,7 +161,6 @@ extension ImagesListViewController: ImagesListCellDelegate {
         case .success:
           photo.isLiked.toggle()
           self.photos[indexPath.row].isLiked = photo.isLiked
-          
           cell.setIsLiked(photo.isLiked)
           
         case .failure:
