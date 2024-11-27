@@ -112,6 +112,10 @@ extension ImagesListViewController: UITableViewDataSource {
     imageListCell.setIsLiked(photo.isLiked)
     imageListCell.delegate = self
     
+    // Обновляем отображение лейбла и градиента
+    imageListCell.cellLabel.alpha = 1
+    imageListCell.showGradientAndLabel()
+    
     return imageListCell
   }
 }
@@ -139,13 +143,11 @@ extension ImagesListViewController: UITableViewDelegate {
     singleImageVC.modalPresentationStyle = .fullScreen
     present(singleImageVC, animated: true)
   }
-  
 }
 
 // MARK: - ImagesListCellDelegate
 
 extension ImagesListViewController: ImagesListCellDelegate {
-  
   func imageListCellDidTapLike(_ cell: ImagesListCell) {
     guard let indexPath = tableView.indexPath(for: cell) else { return }
     var photo = photos[indexPath.row]

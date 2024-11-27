@@ -74,7 +74,6 @@ final class SingleImageViewController: UIViewController {
   
   private func setupConstraints() {
     NSLayoutConstraint.activate([
-
       scrollView.topAnchor.constraint(equalTo: view.topAnchor),
       scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
       scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -139,6 +138,7 @@ final class SingleImageViewController: UIViewController {
   
   private func rescaleImage() {
     guard let image = imageView.image else { return }
+    
     let hScale = view.bounds.width / image.size.width
     let vScale = view.bounds.height / image.size.height
     
