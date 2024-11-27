@@ -25,7 +25,7 @@ final class ProfileViewController: UIViewController {
     let label = UILabel()
     label.text = profile?.name
     label.font = UIFont.boldSystemFont(ofSize: 23)
-    label.textColor = .clear // Делаем текст прозрачным
+    label.textColor = .clear
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -34,7 +34,7 @@ final class ProfileViewController: UIViewController {
     let label = UILabel()
     label.text = profile?.loginName
     label.font = UIFont.systemFont(ofSize: 13)
-    label.textColor = .clear // Делаем текст прозрачным
+    label.textColor = .clear
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -43,7 +43,7 @@ final class ProfileViewController: UIViewController {
     let label = UILabel()
     label.text = profile?.bio
     label.font = UIFont.systemFont(ofSize: 13)
-    label.textColor = .clear // Делаем текст прозрачным
+    label.textColor = .clear
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -182,8 +182,6 @@ final class ProfileViewController: UIViewController {
       print("Неверный URL для аватара.")
       return
     }
-    
-    profileImageView.kf.indicatorType = .activity
     
     profileImageView.kf.setImage(
       with: url,
