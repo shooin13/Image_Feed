@@ -1,5 +1,7 @@
 import UIKit
 
+// MARK: - ImagesListService
+
 final class ImagesListService {
   
   // MARK: - Shared Instance
@@ -25,13 +27,14 @@ final class ImagesListService {
     isLoading = true
     
     guard let request = makeFetchPhotosRequest(page: nextPage) else {
-      print("[fetchPhotosNextPage]: Ошибка создания запроса")
+      print("[fetchPhotosNextPage]: [NetworkError] Ошибка создания запроса")
       isLoading = false
       return
     }
     
-    let task = urlSession.objectTask(for: request) { (result: Result<[PhotoResult], Error>) in
+    let task = urlSession.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], Error>) in
       DispatchQueue.main.async {
+        guard let self = self else { return }
         self.isLoading = false
         
         switch result {
@@ -39,18 +42,22 @@ final class ImagesListService {
           let newPhotos = photoResults.map { self.convertToPhoto(from: $0) }
           self.photos.append(contentsOf: newPhotos)
           self.lastLoadedPage = nextPage
-          
           NotificationCenter.default.post(
             name: ImagesListService.didChangeNotification,
             object: self
           )
-          
         case .failure(let error):
-          print("[fetchPhotosNextPage]: Ошибка сети - \(error.localizedDescription)")
+          print("[fetchPhotosNextPage]: [NetworkError] Ошибка сети \(error.localizedDescription), Request: \(request)")
+          let alert = UIAlertController(
+            title: "Ошибка сети",
+            message: "Не удалось загрузить фотографии. Проверьте подключение к интернету.",
+            preferredStyle: .alert
+          )
+          alert.addAction(UIAlertAction(title: "OK", style: .default))
+          UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
         }
       }
     }
-    
     task.resume()
   }
   
@@ -63,7 +70,7 @@ final class ImagesListService {
   
   func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
     guard let request = makeLikeRequest(photoId: photoId, isLike: isLike) else {
-      print("[changeLike]: Ошибка создания запроса")
+      print("[changeLike]: [NetworkError] Ошибка создания запроса, PhotoID: \(photoId)")
       completion(.failure(NetworkError.urlSessionError))
       return
     }
@@ -71,12 +78,11 @@ final class ImagesListService {
     let task = urlSession.objectTask(for: request) { (result: Result<LikeResponse, Error>) in
       DispatchQueue.main.async {
         switch result {
-        case .success(let likeResponse):
-          let photo = likeResponse.photo
-          print("[changeLike]: Успешно обновлено состояние лайка для фото ID \(photo.id).")
+        case .success:
+          print("[changeLike]: Лайк успешно обновлён, PhotoID: \(photoId)")
           completion(.success(()))
         case .failure(let error):
-          print("[changeLike]: Ошибка выполнения изменения лайка - \(error.localizedDescription)")
+          print("[changeLike]: [NetworkError] Ошибка изменения лайка \(error.localizedDescription), PhotoID: \(photoId), Request: \(request)")
           completion(.failure(error))
         }
       }

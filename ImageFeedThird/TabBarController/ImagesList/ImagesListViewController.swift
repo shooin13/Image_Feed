@@ -100,12 +100,15 @@ extension ImagesListViewController: UITableViewDataSource {
     let thumbURL = URL(string: photo.thumbImageURL)
     
     imageListCell.delegate = self
-    imageListCell.setLabelText(with: dateFormatter.string(from: photo.createdAt ?? Date()))
+    imageListCell.setLabelText(
+      with: photo.createdAt.map { dateFormatter.string(from: $0) } ?? "Дата неизвестна"
+    )
     imageListCell.setImage(with: thumbURL)
     imageListCell.setIsLiked(photo.isLiked)
     
     return imageListCell
   }
+  
 }
 
 // MARK: - UITableViewDelegate

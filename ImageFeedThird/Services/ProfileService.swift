@@ -39,10 +39,11 @@ final class ProfileService {
     }
     
     guard let request = makeProfileRequest() else {
-      print("[fetchProfile]: ProfileServiceError - Неверный запрос")
+      print("[fetchProfile]: [ProfileServiceError.invalidRequest] Ошибка создания запроса")
       completeAllRequests(with: .failure(ProfileServiceError.invalidRequest))
       return
     }
+    
     task?.cancel()
     
     let task = urlSession.objectTask(for: request) { (result: Result<ProfileResult, Error>) in
@@ -53,7 +54,11 @@ final class ProfileService {
           self.profile = profile
           self.completeAllRequests(with: .success(profile))
         case .failure(let error):
-          print("[fetchProfile]: Ошибка сети - \(error.localizedDescription)")
+          if let decodingError = error as? DecodingError {
+            print("[fetchProfile]: [DecodingError] Ошибка декодирования \(decodingError.localizedDescription), Request: \(request)")
+          } else {
+            print("[fetchProfile]: [NetworkError] Ошибка сети \(error.localizedDescription), Request: \(request)")
+          }
           self.completeAllRequests(with: .failure(error))
         }
       }

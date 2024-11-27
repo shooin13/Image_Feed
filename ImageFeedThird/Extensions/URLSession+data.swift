@@ -9,29 +9,28 @@ enum NetworkError: Error {
 
 extension URLSession {
   func data(for request: URLRequest, completion: @escaping (Result<Data, Error>) -> Void) -> URLSessionTask {
-    
     let fulfillCompletionOnTheMainThread: (Result<Data, Error>) -> Void = { result in
       DispatchQueue.main.async {
         completion(result)
       }
     }
     
-    let task = dataTask(with: request, completionHandler: { data, response, error in
+    let task = dataTask(with: request) { data, response, error in
       if let data = data, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
-        if 200 ..< 300 ~= statusCode {
+        if 200..<300 ~= statusCode {
           fulfillCompletionOnTheMainThread(.success(data))
         } else {
-          print("[dataTask]: NetworkError - HTTP статус код \(statusCode), Request: \(request)")
+          print("[dataTask]: [NetworkError] HTTP статус код \(statusCode), Request: \(request)")
           fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
         }
       } else if let error = error {
-        print("[dataTask]: NetworkError - Ошибка URL запроса \(error.localizedDescription), Request: \(request)")
+        print("[dataTask]: [NetworkError.urlRequestError] Ошибка URL запроса \(error.localizedDescription), Request: \(request)")
         fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
       } else {
-        print("[dataTask]: NetworkError - Ошибка URL сессии, Request: \(request)")
+        print("[dataTask]: [NetworkError.urlSessionError] Ошибка URL сессии, Request: \(request)")
         fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
       }
-    })
+    }
     
     task.resume()
     return task
@@ -50,15 +49,19 @@ extension URLSession {
           DispatchQueue.main.async {
             completion(.success(decodedObject))
           }
-        } catch {
-          print("[objectTask]: Ошибка декодирования \(error.localizedDescription), Данные: \(String(data: data, encoding: .utf8) ?? ""), Request: \(request)")
+        } catch let decodingError as DecodingError {
+          print("[objectTask]: [DecodingError] Ошибка декодирования \(decodingError.localizedDescription), Данные: \(String(data: data, encoding: .utf8) ?? "nil"), Request: \(request)")
           DispatchQueue.main.async {
-            completion(.failure(NetworkError.urlSessionError))
+            completion(.failure(NetworkError.decodingError(decodingError)))
+          }
+        } catch {
+          print("[objectTask]: [NetworkError] Неизвестная ошибка \(error.localizedDescription), Request: \(request)")
+          DispatchQueue.main.async {
+            completion(.failure(error))
           }
         }
-        
       case .failure(let error):
-        print("[objectTask]: Ошибка - \(error.localizedDescription), Request: \(request)")
+        print("[objectTask]: [NetworkError] Ошибка сети \(error.localizedDescription), Request: \(request)")
         DispatchQueue.main.async {
           completion(.failure(error))
         }

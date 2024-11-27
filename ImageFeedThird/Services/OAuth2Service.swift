@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 // MARK: - AuthServiceError
 
@@ -79,9 +79,16 @@ final class OAuth2Service {
           tokenStorage.token = tokenResponse.accessToken
           self.completeAll(for: code, result: .success(tokenResponse.accessToken))
         case .failure(let error):
-          print("[fetchOAuthToken]: Ошибка сети - \(error.localizedDescription), Code: \(code)")
-          self.handleNetworkError(error)
-          self.completeAll(for: code, result: .failure(error))
+          DispatchQueue.main.async {
+            let alert = UIAlertController(
+              title: "Ошибка авторизации",
+              message: "Не удалось получить токен. Попробуйте снова.",
+              preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+          }
+          print("[fetchOAuthToken]: [NetworkError] Ошибка сети \(error.localizedDescription), Code: \(code)")
         }
       }
     }
