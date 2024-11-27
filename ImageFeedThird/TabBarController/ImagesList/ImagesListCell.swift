@@ -16,7 +16,6 @@ final class ImagesListCell: UITableViewCell {
     imageView.contentMode = .scaleAspectFill
     imageView.clipsToBounds = true
     imageView.layer.cornerRadius = 16
-    imageView.layer.masksToBounds = true
     return imageView
   }()
   
@@ -49,6 +48,7 @@ final class ImagesListCell: UITableViewCell {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
     setupViews()
     setupConstraints()
+    gradientLayer.opacity = 1
   }
   
   required init?(coder: NSCoder) {
@@ -58,7 +58,12 @@ final class ImagesListCell: UITableViewCell {
   // MARK: - Lifecycle
   override func layoutSubviews() {
     super.layoutSubviews()
-    updateGradientFrame()
+    gradientLayer.frame = CGRect(
+      x: 0,
+      y: contentView.bounds.height - 50,
+      width: contentView.bounds.width,
+      height: 50
+    )
   }
   
   override func prepareForReuse() {
@@ -74,8 +79,8 @@ final class ImagesListCell: UITableViewCell {
     contentView.addSubview(cellLabel)
     contentView.addSubview(cellButton)
     
-    self.backgroundColor = UIColor(named: "YPBlack")
-    self.selectionStyle = .none
+    backgroundColor = UIColor(named: "YPBlack")
+    selectionStyle = .none
   }
   
   private func setupConstraints() {
@@ -86,21 +91,17 @@ final class ImagesListCell: UITableViewCell {
       cellImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
       
       cellLabel.leadingAnchor.constraint(equalTo: cellImage.leadingAnchor, constant: 8),
-      cellLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+      cellLabel.bottomAnchor.constraint(equalTo: cellImage.bottomAnchor, constant: -8),
       
       cellButton.trailingAnchor.constraint(equalTo: cellImage.trailingAnchor, constant: -8),
       cellButton.topAnchor.constraint(equalTo: cellImage.topAnchor, constant: 8)
     ])
   }
   
-  // MARK: - Gradient Methods
-  func updateGradientFrame() {
-    gradientLayer.frame = CGRect(
-      x: 0,
-      y: contentView.bounds.height - 50,
-      width: contentView.bounds.width,
-      height: 50
-    )
+  // MARK: - Methods to update UI
+  func setIsLiked(_ isLiked: Bool) {
+    let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
+    cellButton.setImage(likeImage, for: .normal)
   }
   
   func showGradientAndLabel() {
@@ -108,11 +109,6 @@ final class ImagesListCell: UITableViewCell {
       self.gradientLayer.opacity = 1
       self.cellLabel.alpha = 1
     }
-  }
-  
-  func setIsLiked(_ isLiked: Bool) {
-    let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
-    cellButton.setImage(likeImage, for: .normal)
   }
   
   // MARK: - Actions
