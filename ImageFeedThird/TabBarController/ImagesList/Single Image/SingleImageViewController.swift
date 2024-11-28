@@ -24,6 +24,14 @@ final class SingleImageViewController: UIViewController {
     return imageView
   }()
   
+  private let stubImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.image = UIImage(named: "Stub")
+    imageView.contentMode = .scaleAspectFit
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
+  }()
+  
   private let backButton: UIButton = {
     let button = UIButton()
     button.setImage(UIImage(named: "BackButtonLight"), for: .normal)
@@ -67,6 +75,7 @@ final class SingleImageViewController: UIViewController {
   private func setupViews() {
     view.backgroundColor = .black
     view.addSubview(scrollView)
+    view.addSubview(stubImageView)
     view.addSubview(backButton)
     view.addSubview(shareButton)
     scrollView.addSubview(imageView)
@@ -74,17 +83,25 @@ final class SingleImageViewController: UIViewController {
   
   private func setupConstraints() {
     NSLayoutConstraint.activate([
-      
+      // ScrollView constraints
       scrollView.topAnchor.constraint(equalTo: view.topAnchor),
       scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
       scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
       scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
       
+      // StubImageView constraints
+      stubImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      stubImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+      stubImageView.widthAnchor.constraint(equalToConstant: 83),
+      stubImageView.heightAnchor.constraint(equalToConstant: 75),
+      
+      // BackButton constraints
       backButton.widthAnchor.constraint(equalToConstant: 44),
       backButton.heightAnchor.constraint(equalTo: backButton.widthAnchor),
       backButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
       backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
       
+      // ShareButton constraints
       shareButton.widthAnchor.constraint(equalToConstant: 44),
       shareButton.heightAnchor.constraint(equalTo: shareButton.widthAnchor),
       shareButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -104,14 +121,17 @@ final class SingleImageViewController: UIViewController {
     guard let url = imageURL else { return }
     
     UIBlockingProgressHUD.show()
+    stubImageView.isHidden = false // Show stub image while loading
     
     imageView.kf.setImage(
       with: url,
       options: [.transition(.fade(0.3))]
     ) { [weak self] result in
       UIBlockingProgressHUD.dismiss()
-      
       guard let self = self else { return }
+      
+      self.stubImageView.isHidden = true // Hide stub image when loading finishes
+      
       switch result {
       case .success(let value):
         print("Изображение загружено: \(value.image)")
