@@ -66,6 +66,11 @@ final class ProfileImageService {
     task.resume()
   }
   
+  // MARK: - Reset Avatar URL
+  func resetAvatarURL() {
+    avatarURL = nil
+  }
+  
   // MARK: - Make Request
   
   private func makeProfileImageRequest(for username: String) -> URLRequest? {

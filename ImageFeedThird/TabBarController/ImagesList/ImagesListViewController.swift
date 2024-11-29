@@ -1,12 +1,13 @@
 import UIKit
+import Kingfisher
 
 // MARK: - ImagesListViewController
 
 class ImagesListViewController: UIViewController {
-  
   // MARK: - Properties
-  
-  private let photosName: [String] = Array(0..<20).map{"\($0)"}
+  private let imagesListService = ImagesListService.shared
+  private var photos: [Photo] = []
+  private var isFetchingNextPage = false
   
   private lazy var dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -16,26 +17,40 @@ class ImagesListViewController: UIViewController {
   }()
   
   // MARK: - UI Elements
-  
   private let tableView: UITableView = {
     let tableView = UITableView()
     tableView.translatesAutoresizingMaskIntoConstraints = false
-    tableView.rowHeight = 200
+    tableView.rowHeight = UITableView.automaticDimension
+    tableView.estimatedRowHeight = 200
     tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     tableView.backgroundColor = UIColor(named: "YPBlack")
     return tableView
   }()
   
   // MARK: - View Lifecycle
-  
   override func viewDidLoad() {
     super.viewDidLoad()
     setupTableView()
     setupConstraints()
+    setupObservers()
+    imagesListService.fetchPhotosNextPage()
   }
   
-  // MARK: - Setup Methods
+  deinit {
+    NotificationCenter.default.removeObserver(self)
+  }
   
+  // MARK: - Setup Observers
+  private func setupObservers() {
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(updateTableViewAnimated),
+      name: ImagesListService.didChangeNotification,
+      object: nil
+    )
+  }
+  
+  // MARK: - Setup TableView
   private func setupTableView() {
     tableView.dataSource = self
     tableView.delegate = self
@@ -52,25 +67,18 @@ class ImagesListViewController: UIViewController {
     ])
   }
   
-  // MARK: - Cell Configuration
-  
-  private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-    guard let image = UIImage(named: "\(photosName[indexPath.row])") else { return }
-    cell.cellImage.image = image
-    configureGradient(for: cell)
-    cell.cellLabel.text = dateFormatter.string(from: Date())
-    cell.cellButton.setTitle("", for: .normal)
-    let isLiked = indexPath.row % 2 == 0
-    let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
-    cell.cellButton.setImage(likeImage, for: .normal)
-  }
-  
-  private func configureGradient(for cell: ImagesListCell) {
-    let view = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
-    let gradient = CAGradientLayer()
-    gradient.frame = view.bounds
-    gradient.colors = [UIColor.white.cgColor, UIColor.black.cgColor]
-    view.layer.insertSublayer(gradient, at: 0)
+  // MARK: - Update TableView
+  @objc private func updateTableViewAnimated() {
+    let oldCount = photos.count
+    let newCount = imagesListService.photos.count
+    photos = imagesListService.photos
+    isFetchingNextPage = false
+    if oldCount != newCount {
+      tableView.performBatchUpdates {
+        let indexPaths = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
+        tableView.insertRows(at: indexPaths, with: .automatic)
+      } completion: { _ in }
+    }
   }
 }
 
@@ -78,7 +86,7 @@ class ImagesListViewController: UIViewController {
 
 extension ImagesListViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return photosName.count
+    return photos.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -88,32 +96,88 @@ extension ImagesListViewController: UITableViewDataSource {
       return UITableViewCell()
     }
     
-    configCell(for: imageListCell, with: indexPath)
+    let photo = photos[indexPath.row]
+    let thumbURL = URL(string: photo.thumbImageURL)
+    
+    imageListCell.delegate = self
+    imageListCell.setLabelText(
+      with: photo.createdAt.map { dateFormatter.string(from: $0) } ?? "Дата неизвестна"
+    )
+    imageListCell.setImage(with: thumbURL)
+    imageListCell.setIsLiked(photo.isLiked)
     
     return imageListCell
   }
+  
 }
 
 // MARK: - UITableViewDelegate
 
 extension ImagesListViewController: UITableViewDelegate {
+  func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    if indexPath.row == photos.count - 1 && !isFetchingNextPage {
+      isFetchingNextPage = true
+      imagesListService.fetchPhotosNextPage()
+    }
+  }
+  
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let photo = photos[indexPath.row]
+    guard let largeURL = URL(string: photo.largeImageURL) else {
+      print("Некорректный URL для фото")
+      return
+    }
     
     let singleImageVC = SingleImageViewController()
-    
-    singleImageVC.image = UIImage(named: photosName[indexPath.row])
-    
+    singleImageVC.imageURL = largeURL
     singleImageVC.modalPresentationStyle = .fullScreen
     present(singleImageVC, animated: true)
   }
+}
+
+// MARK: - ImagesListCellDelegate
+
+extension ImagesListViewController: ImagesListCellDelegate {
+  func imageListCellDidUpdateHeight(_ cell: ImagesListCell) {
+    DispatchQueue.main.async {
+      guard let indexPath = self.tableView.indexPath(for: cell) else { return }
+      self.tableView.beginUpdates()
+      self.tableView.endUpdates()
+    }
+  }
   
-  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    guard let image = UIImage(named: "\(indexPath.row)") else { return 200 }
-    let imageWidth = Double(image.size.width)
-    let imageHeight = Double(image.size.height)
-    let viewWidth = Double(tableView.frame.size.width) - (16 * 2)
-    let viewHeight = (viewWidth / imageWidth) * imageHeight
+  func imageListCellDidTapLike(_ cell: ImagesListCell) {
+    guard let indexPath = tableView.indexPath(for: cell) else { return }
+    var photo = photos[indexPath.row]
     
-    return CGFloat(viewHeight)
+    UIBlockingProgressHUD.show()
+    
+    cell.isUserInteractionEnabled = false
+    
+    imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+      guard let self = self else { return }
+      
+      DispatchQueue.main.async {
+        cell.isUserInteractionEnabled = true
+        
+        switch result {
+        case .success:
+          photo.isLiked.toggle()
+          self.photos[indexPath.row].isLiked = photo.isLiked
+          cell.setIsLiked(photo.isLiked)
+          
+        case .failure:
+          let alert = UIAlertController(
+            title: "Error",
+            message: "Failed to change like status. Please try again.",
+            preferredStyle: .alert
+          )
+          alert.addAction(UIAlertAction(title: "OK", style: .default))
+          self.present(alert, animated: true)
+        }
+        
+        UIBlockingProgressHUD.dismiss()
+      }
+    }
   }
 }

@@ -5,9 +5,10 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
   
-  //MARK: - Properties
+  // MARK: - Properties
   
   private var profile = ProfileService.shared.profile
+  private var gradientLayers = [UIView: CAGradientLayer]()
   
   // MARK: - UI Elements
   
@@ -15,7 +16,7 @@ final class ProfileViewController: UIViewController {
     let image = UIImageView()
     image.image = UIImage(named: "Placeholder")
     image.translatesAutoresizingMaskIntoConstraints = false
-    image.layer.cornerRadius = image.frame.width / 2
+    image.layer.cornerRadius = 35
     image.layer.masksToBounds = true
     return image
   }()
@@ -24,7 +25,7 @@ final class ProfileViewController: UIViewController {
     let label = UILabel()
     label.text = profile?.name
     label.font = UIFont.boldSystemFont(ofSize: 23)
-    label.textColor = .white
+    label.textColor = .clear
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -33,7 +34,7 @@ final class ProfileViewController: UIViewController {
     let label = UILabel()
     label.text = profile?.loginName
     label.font = UIFont.systemFont(ofSize: 13)
-    label.textColor = UIColor(red: 174/255, green: 175/255, blue: 180/255, alpha: 1)
+    label.textColor = .clear
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -42,7 +43,7 @@ final class ProfileViewController: UIViewController {
     let label = UILabel()
     label.text = profile?.bio
     label.font = UIFont.systemFont(ofSize: 13)
-    label.textColor = .white
+    label.textColor = .clear
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -61,6 +62,8 @@ final class ProfileViewController: UIViewController {
     super.viewDidLoad()
     addViews()
     setupConstraints()
+    setupGradients()
+    startGradientAnimations()
     updateAvatar()
     updateProfileUI()
     
@@ -74,7 +77,7 @@ final class ProfileViewController: UIViewController {
   
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
-    profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
+    updateGradientFrames()
   }
   
   deinit {
@@ -113,14 +116,72 @@ final class ProfileViewController: UIViewController {
     view.addSubview(profileDescription)
   }
   
+  // MARK: - Gradient Setup
+  
+  private func setupGradients() {
+    let viewsWithGradients: [UIView] = [profileImageView, profileName, profileNick, profileDescription]
+    
+    for view in viewsWithGradients {
+      let gradient = createGradientLayer(for: view)
+      view.layer.addSublayer(gradient)
+      gradientLayers[view] = gradient
+    }
+  }
+  
+  private func createGradientLayer(for view: UIView) -> CAGradientLayer {
+    let gradient = CAGradientLayer()
+    gradient.colors = [
+      UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1).cgColor,
+      UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
+      UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+    ]
+    gradient.locations = [0, 0.5, 1]
+    gradient.startPoint = CGPoint(x: 0, y: 0.5)
+    gradient.endPoint = CGPoint(x: 1, y: 0.5)
+    gradient.cornerRadius = 9
+    gradient.masksToBounds = true
+    return gradient
+  }
+  
+  private func updateGradientFrames() {
+    for (view, gradient) in gradientLayers {
+      gradient.frame = view.bounds
+    }
+  }
+  
+  private func startGradientAnimations() {
+    for gradient in gradientLayers.values {
+      let animation = CABasicAnimation(keyPath: "locations")
+      animation.fromValue = [0, 0.1, 0.3]
+      animation.toValue = [0.7, 0.9, 1]
+      animation.duration = 1.5
+      animation.repeatCount = .infinity
+      gradient.add(animation, forKey: "locationsChange")
+    }
+  }
+  
+  private func removeGradients() {
+    gradientLayers.values.forEach { $0.removeFromSuperlayer() }
+    gradientLayers.removeAll()
+    showProfileContent()
+  }
+  
+  private func showProfileContent() {
+    UIView.animate(withDuration: 0.3) {
+      self.profileName.textColor = .white
+      self.profileNick.textColor = UIColor(red: 174/255, green: 175/255, blue: 180/255, alpha: 1)
+      self.profileDescription.textColor = .white
+    }
+  }
+  
+  // MARK: - Avatar Update
+  
   private func updateAvatar() {
     guard let profileImageURL = ProfileImageService.shared.avatarURL,
           let url = URL(string: profileImageURL) else {
       print("Неверный URL для аватара.")
       return
     }
-    
-    profileImageView.kf.indicatorType = .activity
     
     profileImageView.kf.setImage(
       with: url,
@@ -129,10 +190,12 @@ final class ProfileViewController: UIViewController {
         .targetCache(Constants.avatarImageCache),
         .transition(.fade(0.3))
       ]
-    ) { result in
+    ) { [weak self] result in
+      guard let self = self else { return }
       switch result {
-      case .success(let value):
-        print("Аватар обновлен: \(value.image)")
+      case .success:
+        print("Аватар обновлен")
+        self.removeGradients()
       case .failure(let error):
         print("Ошибка при обновлении аватара: \(error.localizedDescription)")
       }
@@ -150,9 +213,24 @@ final class ProfileViewController: UIViewController {
     print("Интерфейс профиля обновлен")
   }
   
-  //MARK: - Actions
+  // MARK: - Actions
   
   @objc private func logoutButtonTapped() {
-    print("logout tapped")
+    let alert = UIAlertController(
+      title: "Пока, пока!",
+      message: "Уверены, что хотите выйти?",
+      preferredStyle: .alert
+    )
+    alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
+    alert.addAction(UIAlertAction(title: "Да", style: .destructive) { _ in
+      ProfileLogoutService.shared.logout()
+      self.switchToSplashViewController()
+    })
+    present(alert, animated: true)
+  }
+  
+  private func switchToSplashViewController() {
+    let splashViewController = SplashViewController()
+    UIApplication.shared.windows.first?.rootViewController = splashViewController
   }
 }
