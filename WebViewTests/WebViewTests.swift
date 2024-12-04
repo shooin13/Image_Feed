@@ -45,5 +45,37 @@ final class WebViewTests: XCTestCase {
     XCTAssertTrue(viewControllerSpy.isProgressHidden, "Progress должен быть скрыт, если значение равно единице")
   }
   
+  func testAuthHelperAuthURL() {
+    // given
+    let configuration = AuthConfiguration.standard
+    let authHelper = AuthHelper(configuration: configuration)
+    
+    // when
+    let url = authHelper.authURL()
+    
+    guard let urlString = url?.absoluteString else {
+      XCTFail("Auth URL is nil")
+      return
+    }
+    
+    // then
+    XCTAssertTrue(urlString.contains(configuration.authURLString), "URL должен содержать строку авторизации")
+    XCTAssertTrue(urlString.contains(configuration.accessKey), "URL должен содержать accessKey")
+    XCTAssertTrue(urlString.contains(configuration.redirectURI), "URL должен содержать redirectURI")
+    XCTAssertTrue(urlString.contains("code"), "URL должен содержать параметр code")
+    XCTAssertTrue(urlString.contains(configuration.accessScope), "URL должен содержать accessScope")
+  }
   
+  func testAuthHelperCodeFromURL() {
+    // given
+    let configuration = AuthConfiguration.standard
+    let authHelper = AuthHelper(configuration: configuration)
+    let url = URL(string: "https://unsplash.com/oauth/authorize/native?code=testCode123")!
+    
+    // when
+    let code = authHelper.code(from: url)
+    
+    // then
+    XCTAssertEqual(code, "testCode123", "Код из URL должен быть равен testCode123")
+  }
 }
