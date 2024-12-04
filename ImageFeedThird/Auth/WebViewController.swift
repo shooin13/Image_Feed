@@ -1,8 +1,6 @@
 import UIKit
 import WebKit
 
-// MARK: - WebViewViewControllerProtocol
-
 public protocol WebViewViewControllerProtocol: AnyObject {
   var presenter: WebViewPresenterProtocol? { get set }
   func load(request: URLRequest)
@@ -10,12 +8,7 @@ public protocol WebViewViewControllerProtocol: AnyObject {
   func setProgressHidden(_ isHidden: Bool)
 }
 
-// MARK: - WebViewViewController
-
 final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
-  
-  // MARK: - Properties
-  
   var presenter: WebViewPresenterProtocol?
   weak var delegate: WebViewViewControllerDelegate?
   
@@ -44,8 +37,6 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
   
   private var estimatedProgressObservation: NSKeyValueObservation?
   
-  // MARK: - View Lifecycle
-  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -61,8 +52,6 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     super.viewDidDisappear(animated)
     estimatedProgressObservation = nil
   }
-  
-  // MARK: - UI Setup
   
   private func addViews() {
     view.addSubview(webView)
@@ -98,8 +87,6 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     )
   }
   
-  // MARK: - WebViewViewControllerProtocol
-  
   func load(request: URLRequest) {
     webView.load(request)
   }
@@ -112,28 +99,16 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     progressView.isHidden = isHidden
   }
   
-  // MARK: - Actions
-  
   @objc private func backButtonTapped() {
     delegate?.webViewViewControllerDidCancel(self)
   }
-  
-  private func code(from navigationAction: WKNavigationAction) -> String? {
-    if let url = navigationAction.request.url {
-      return presenter?.code(from: url)
-    }
-    return nil
-  }
 }
-
-// MARK: - WKNavigationDelegate
 
 extension WebViewViewController: WKNavigationDelegate {
   func webView(_ webView: WKWebView,
                decidePolicyFor navigationAction: WKNavigationAction,
                decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
-    
-    if let code = code(from: navigationAction) {
+    if let code = presenter?.code(from: navigationAction.request.url ?? URL(fileURLWithPath: "")) {
       decisionHandler(.cancel)
       delegate?.webViewViewController(self, didAuthenticateWithCode: code)
     } else {
@@ -141,8 +116,6 @@ extension WebViewViewController: WKNavigationDelegate {
     }
   }
 }
-
-// MARK: - WebViewViewControllerDelegate Protocol
 
 protocol WebViewViewControllerDelegate: AnyObject {
   func webViewViewController(_ viewController: WebViewViewController, didAuthenticateWithCode code: String)
