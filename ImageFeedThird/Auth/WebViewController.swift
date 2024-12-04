@@ -1,12 +1,20 @@
 import UIKit
 import WebKit
 
+// MARK: - WebViewViewControllerProtocol
+
+public protocol WebViewViewControllerProtocol: AnyObject {
+  var presenter: WebViewPresenterProtocol? { get set }
+  func load(request: URLRequest)
+}
+
 // MARK: - WebViewViewController
 
-final class WebViewViewController: UIViewController {
+final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
   
   // MARK: - Properties
   
+  var presenter: WebViewPresenterProtocol?
   weak var delegate: WebViewViewControllerDelegate?
   
   private var estimatedProgressObservation: NSKeyValueObservation?
@@ -34,10 +42,6 @@ final class WebViewViewController: UIViewController {
     return progressView
   }()
   
-  private enum WebViewConstats {
-    static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-  }
-  
   // MARK: - View Lifecycle
   
   override func viewDidLoad() {
@@ -46,7 +50,7 @@ final class WebViewViewController: UIViewController {
     view.backgroundColor = .white
     addViews()
     addConstraints()
-    loadAuthView()
+    presenter?.loadAuthView()
     
     estimatedProgressObservation = webView.observe(
       \.estimatedProgress,
@@ -54,29 +58,13 @@ final class WebViewViewController: UIViewController {
        changeHandler: { [weak self] _, _ in
          guard let self = self else { return }
          self.updateProgress()
-       })
+       }
+    )
   }
   
   override func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(false)
     estimatedProgressObservation = nil
-  }
-  
-  // MARK: - Loading the Authorization View
-  
-  private func loadAuthView() {
-    guard var urlComponents = URLComponents(string: WebViewConstats.unsplashAuthorizeURLString) else { return }
-    urlComponents.queryItems = [
-      URLQueryItem(name: "client_id", value: Constants.accessKey),
-      URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-      URLQueryItem(name: "response_type", value: "code"),
-      URLQueryItem(name: "scope", value: Constants.accessScope)
-    ]
-    
-    guard let url = urlComponents.url else { return }
-    
-    let request = URLRequest(url: url)
-    webView.load(request)
   }
   
   // MARK: - UI Setup
@@ -110,25 +98,16 @@ final class WebViewViewController: UIViewController {
     progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
   }
   
+  // MARK: - WebViewViewControllerProtocol
+  
+  func load(request: URLRequest) {
+    webView.load(request)
+  }
+  
   // MARK: - Actions
   
   @objc private func backButtonTapped() {
     delegate?.webViewViewControllerDidCancel(self)
-  }
-  
-  // MARK: - Navigation Handling
-  
-  private func code(from navigationAction: WKNavigationAction) -> String? {
-    if
-      let url = navigationAction.request.url,
-      let urlComponents = URLComponents(string: url.absoluteString),
-      urlComponents.path == "/oauth/authorize/native",
-      let queryItems = urlComponents.queryItems,
-      let code = queryItems.first(where: { $0.name == "code" })?.value
-    {
-      return code
-    }
-    return nil
   }
 }
 
@@ -139,14 +118,10 @@ extension WebViewViewController: WKNavigationDelegate {
                decidePolicyFor navigationAction: WKNavigationAction,
                decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
     
-    print("Запрос авторизации в процессе: \(String(describing: navigationAction.request.url))")
-    
-    if let code = code(from: navigationAction) {
-      print("Авторизация остановлена")
+    if let code = presenter?.code(from: navigationAction) {
       decisionHandler(.cancel)
       delegate?.webViewViewController(self, didAuthenticateWithCode: code)
     } else {
-      print("Авторизация разрешена")
       decisionHandler(.allow)
     }
   }
@@ -156,6 +131,5 @@ extension WebViewViewController: WKNavigationDelegate {
 
 protocol WebViewViewControllerDelegate: AnyObject {
   func webViewViewController(_ viewController: WebViewViewController, didAuthenticateWithCode code: String)
-  
   func webViewViewControllerDidCancel(_ viewController: WebViewViewController)
 }

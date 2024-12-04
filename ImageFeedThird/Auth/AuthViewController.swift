@@ -8,7 +8,6 @@ final class AuthViewController: UIViewController {
   // MARK: - Properties
   
   private let oauth2Service = OAuth2Service.shared
-  
   weak var delegate: AuthViewControllerDelegate?
   
   private lazy var loginButton: UIButton = {
@@ -63,10 +62,13 @@ final class AuthViewController: UIViewController {
   // MARK: - Actions
   
   @objc private func loginButtonTapped() {
-    let secondVC = WebViewViewController()
-    secondVC.delegate = self
-    secondVC.modalPresentationStyle = .fullScreen
-    present(secondVC, animated: true)
+    let webViewViewController = WebViewViewController()
+    let webViewPresenter = WebViewPresenter()
+    webViewViewController.presenter = webViewPresenter
+    webViewPresenter.view = webViewViewController
+    webViewViewController.delegate = self
+    webViewViewController.modalPresentationStyle = .fullScreen
+    present(webViewViewController, animated: true)
   }
 }
 
@@ -74,34 +76,32 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
   func webViewViewController(_ viewController: WebViewViewController, didAuthenticateWithCode code: String) {
-    
     UIBlockingProgressHUD.show()
     
     oauth2Service.fetchOAuthToken(code: code) { result in
-      
       UIBlockingProgressHUD.dismiss()
       
       switch result {
       case .success(let token):
-        print("Токен получен \(token)")
         self.delegate?.didAuthenticate(self)
         viewController.dismiss(animated: true) {
           let tabBarController = TabBarController()
           tabBarController.modalPresentationStyle = .fullScreen
           self.present(tabBarController, animated: true)
         }
-      case .failure(let error):
-        print("Не удалось получить токен: \(error.localizedDescription)")
-        let alert = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось войти в систему", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "ОК", style: .default))
+      case .failure:
+        let alert = UIAlertController(
+          title: "Ошибка",
+          message: "Не удалось войти в систему",
+          preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
         self.present(alert, animated: true)
       }
     }
   }
   
-  
   func webViewViewControllerDidCancel(_ viewController: WebViewViewController) {
-    print("Авторизация отменена")
     viewController.dismiss(animated: true)
   }
 }
