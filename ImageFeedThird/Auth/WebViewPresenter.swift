@@ -6,7 +6,7 @@ public protocol WebViewPresenterProtocol {
   var view: WebViewViewControllerProtocol? { get set }
   func viewDidLoad()
   func didUpdateProgressValue(_ newValue: Double)
-  func code(from navigationAction: WKNavigationAction) -> String?
+  func code(from url: URL) -> String?
 }
 
 // MARK: - WebViewPresenter
@@ -41,20 +41,18 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     view?.setProgressHidden(shouldHideProgress)
   }
   
-  func shouldHideProgress(for value: Float) -> Bool {
-    abs(value - 1.0) <= 0.0001
+  func code(from url: URL) -> String? {
+    if let urlComponents = URLComponents(string: url.absoluteString),
+       urlComponents.path == "/oauth/authorize/native",
+       let items = urlComponents.queryItems,
+       let codeItem = items.first(where: { $0.name == "code" }) {
+      return codeItem.value
+    } else {
+      return nil
+    }
   }
   
-  func code(from navigationAction: WKNavigationAction) -> String? {
-    if
-      let url = navigationAction.request.url,
-      let urlComponents = URLComponents(string: url.absoluteString),
-      urlComponents.path == "/oauth/authorize/native",
-      let queryItems = urlComponents.queryItems,
-      let code = queryItems.first(where: { $0.name == "code" })?.value
-    {
-      return code
-    }
-    return nil
+  private func shouldHideProgress(for value: Float) -> Bool {
+    abs(value - 1.0) <= 0.0001
   }
 }

@@ -117,6 +117,13 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
   @objc private func backButtonTapped() {
     delegate?.webViewViewControllerDidCancel(self)
   }
+  
+  private func code(from navigationAction: WKNavigationAction) -> String? {
+    if let url = navigationAction.request.url {
+      return presenter?.code(from: url)
+    }
+    return nil
+  }
 }
 
 // MARK: - WKNavigationDelegate
@@ -126,7 +133,7 @@ extension WebViewViewController: WKNavigationDelegate {
                decidePolicyFor navigationAction: WKNavigationAction,
                decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
     
-    if let code = presenter?.code(from: navigationAction) {
+    if let code = code(from: navigationAction) {
       decisionHandler(.cancel)
       delegate?.webViewViewController(self, didAuthenticateWithCode: code)
     } else {
