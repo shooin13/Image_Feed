@@ -8,7 +8,6 @@ protocol ProfileViewProtocol: AnyObject {
   func showError(_ message: String)
 }
 
-
 final class ProfileViewController: UIViewController, ProfileViewProtocol {
   
   // MARK: - Properties

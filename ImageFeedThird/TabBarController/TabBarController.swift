@@ -16,9 +16,10 @@ final class TabBarController: UITabBarController {
   
   private func setupViewControllers() {
     let imagesListViewController = ImagesListViewController()
+    let imagesListPresenter = ImagesListPresenter(view: imagesListViewController)
+    imagesListViewController.presenter = imagesListPresenter
     imagesListViewController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "ImagesTab"), selectedImage: nil)
     
-    // Создаем ProfileViewController с Presenter
     let profileViewController = createProfileViewController()
     profileViewController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "ProfileTab"), selectedImage: nil)
     
@@ -26,16 +27,12 @@ final class TabBarController: UITabBarController {
   }
   
   private func createProfileViewController() -> ProfileViewController {
-    // Создаем пустой экземпляр ProfileViewController
     let placeholderView = PlaceholderProfileView()
     
-    // Создаем Presenter с временной View
     let presenter = ProfilePresenter(view: placeholderView)
     
-    // Инициализируем реальный ProfileViewController
     let profileViewController = ProfileViewController(presenter: presenter)
     
-    // Назначаем реальную View для Presenter
     presenter.view = profileViewController
     
     return profileViewController
@@ -50,7 +47,6 @@ final class TabBarController: UITabBarController {
 
 // MARK: - PlaceholderProfileView
 
-/// Временная заглушка для View, которая реализует протокол ProfileViewProtocol.
 final class PlaceholderProfileView: ProfileViewProtocol {
   func displayProfile(name: String?, loginName: String?, bio: String?, avatarURL: String?) {}
   func displayLogoutConfirmation() {}

@@ -16,7 +16,7 @@ enum Constants {
       fatalError("Ошибка: недопустимый URL")
     }
   }()
-
+  
   static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
   
   static let avatarImageCache: ImageCache = {
@@ -28,21 +28,21 @@ enum Constants {
 }
 
 struct AuthConfiguration {
-    let accessKey: String
-    let secretKey: String
-    let redirectURI: String
-    let accessScope: String
-    let defaultBaseURL: URL
-    let authURLString: String
-
-    static var standard: AuthConfiguration {
-        return AuthConfiguration(
-            accessKey: Constants.accessKey,
-            secretKey: Constants.secretKey,
-            redirectURI: Constants.redirectURI,
-            accessScope: Constants.accessScope,
-            defaultBaseURL: Constants.defaultBaseURL,
-            authURLString: Constants.unsplashAuthorizeURLString
-        )
-    }
+  let accessKey: String
+  let secretKey: String
+  let redirectURI: String
+  let accessScope: String
+  let defaultBaseURL: URL
+  let authURLString: String
+  
+  static var standard: AuthConfiguration {
+    return AuthConfiguration(
+      accessKey: Constants.accessKey,
+      secretKey: Constants.secretKey,
+      redirectURI: Constants.redirectURI,
+      accessScope: Constants.accessScope,
+      defaultBaseURL: Constants.defaultBaseURL,
+      authURLString: Constants.unsplashAuthorizeURLString
+    )
+  }
 }
