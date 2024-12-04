@@ -21,7 +21,6 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
   
   private lazy var backButton: UIButton = {
     let button = UIButton()
-    button.setTitle("", for: .normal)
     button.setImage(UIImage(named: "BackButtonDark"), for: .normal)
     button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
     button.translatesAutoresizingMaskIntoConstraints = false
@@ -39,18 +38,12 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
     webView.navigationDelegate = self
     view.backgroundColor = .white
     addViews()
     addConstraints()
     presenter?.viewDidLoad()
     setupProgressObservation()
-  }
-  
-  override func viewDidDisappear(_ animated: Bool) {
-    super.viewDidDisappear(animated)
-    estimatedProgressObservation = nil
   }
   
   private func addViews() {
@@ -107,7 +100,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
 extension WebViewViewController: WKNavigationDelegate {
   func webView(_ webView: WKWebView,
                decidePolicyFor navigationAction: WKNavigationAction,
-               decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
+               decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     if let code = presenter?.code(from: navigationAction.request.url ?? URL(fileURLWithPath: "")) {
       decisionHandler(.cancel)
       delegate?.webViewViewController(self, didAuthenticateWithCode: code)
@@ -116,6 +109,7 @@ extension WebViewViewController: WKNavigationDelegate {
     }
   }
 }
+
 
 protocol WebViewViewControllerDelegate: AnyObject {
   func webViewViewController(_ viewController: WebViewViewController, didAuthenticateWithCode code: String)
