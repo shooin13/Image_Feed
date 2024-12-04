@@ -31,4 +31,19 @@ final class WebViewTests: XCTestCase {
     XCTAssertNotNil(viewControllerSpy.lastRequest, "URLRequest должен быть передан в метод load(request:)")
     XCTAssertEqual(viewControllerSpy.lastRequest?.url?.absoluteString, authHelper.authRequest()?.url?.absoluteString, "URLRequest должен содержать ожидаемый URL")
   }
+  
+  func testProgressHiddenWhenOne() {
+    // given
+    let presenter = WebViewPresenter()
+    let viewControllerSpy = WebViewViewControllerSpy()
+    presenter.view = viewControllerSpy
+    
+    // when
+    presenter.didUpdateProgressValue(1.0)
+    
+    // then
+    XCTAssertTrue(viewControllerSpy.isProgressHidden, "Progress должен быть скрыт, если значение равно единице")
+  }
+  
+  
 }
