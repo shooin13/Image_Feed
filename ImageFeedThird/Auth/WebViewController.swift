@@ -6,6 +6,8 @@ import WebKit
 public protocol WebViewViewControllerProtocol: AnyObject {
   var presenter: WebViewPresenterProtocol? { get set }
   func load(request: URLRequest)
+  func setProgressValue(_ newValue: Float)
+  func setProgressHidden(_ isHidden: Bool)
 }
 
 // MARK: - WebViewViewController
@@ -16,8 +18,6 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
   
   var presenter: WebViewPresenterProtocol?
   weak var delegate: WebViewViewControllerDelegate?
-  
-  private var estimatedProgressObservation: NSKeyValueObservation?
   
   private lazy var webView: WKWebView = {
     let webView = WKWebView()
@@ -42,6 +42,8 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     return progressView
   }()
   
+  private var estimatedProgressObservation: NSKeyValueObservation?
+  
   // MARK: - View Lifecycle
   
   override func viewDidLoad() {
@@ -51,7 +53,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     view.backgroundColor = .white
     addViews()
     addConstraints()
-    presenter?.viewDidLoad() // Теперь вызываем метод презентера
+    presenter?.viewDidLoad()
     setupProgressObservation()
   }
   
@@ -91,20 +93,23 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
       \.estimatedProgress,
        options: [],
        changeHandler: { [weak self] _, _ in
-         self?.updateProgress()
+         self?.presenter?.didUpdateProgressValue(self?.webView.estimatedProgress ?? 0.0)
        }
     )
-  }
-  
-  private func updateProgress() {
-    progressView.progress = Float(webView.estimatedProgress)
-    progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
   }
   
   // MARK: - WebViewViewControllerProtocol
   
   func load(request: URLRequest) {
     webView.load(request)
+  }
+  
+  func setProgressValue(_ newValue: Float) {
+    progressView.progress = newValue
+  }
+  
+  func setProgressHidden(_ isHidden: Bool) {
+    progressView.isHidden = isHidden
   }
   
   // MARK: - Actions
