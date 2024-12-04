@@ -46,24 +46,17 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
     webView.navigationDelegate = self
     view.backgroundColor = .white
     addViews()
     addConstraints()
-    presenter?.loadAuthView()
-    
-    estimatedProgressObservation = webView.observe(
-      \.estimatedProgress,
-       options: [],
-       changeHandler: { [weak self] _, _ in
-         guard let self = self else { return }
-         self.updateProgress()
-       }
-    )
+    presenter?.viewDidLoad() // Теперь вызываем метод презентера
+    setupProgressObservation()
   }
   
   override func viewDidDisappear(_ animated: Bool) {
-    super.viewDidDisappear(false)
+    super.viewDidDisappear(animated)
     estimatedProgressObservation = nil
   }
   
@@ -91,6 +84,16 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
       progressView.topAnchor.constraint(equalTo: backButton.bottomAnchor),
       progressView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor)
     ])
+  }
+  
+  private func setupProgressObservation() {
+    estimatedProgressObservation = webView.observe(
+      \.estimatedProgress,
+       options: [],
+       changeHandler: { [weak self] _, _ in
+         self?.updateProgress()
+       }
+    )
   }
   
   private func updateProgress() {
