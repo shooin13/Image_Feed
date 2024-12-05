@@ -34,6 +34,7 @@ final class ProfileViewController: UIViewController, ProfileViewProtocol {
     let label = UILabel()
     label.font = UIFont.boldSystemFont(ofSize: 23)
     label.translatesAutoresizingMaskIntoConstraints = false
+    label.accessibilityIdentifier = "profile name label"
     return label
   }()
   
@@ -41,6 +42,7 @@ final class ProfileViewController: UIViewController, ProfileViewProtocol {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 13)
     label.translatesAutoresizingMaskIntoConstraints = false
+    label.accessibilityIdentifier = "profile username label"
     return label
   }()
   
@@ -56,6 +58,7 @@ final class ProfileViewController: UIViewController, ProfileViewProtocol {
     button.setImage(UIImage(named: "LogOutButton"), for: .normal)
     button.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
     button.translatesAutoresizingMaskIntoConstraints = false
+    button.accessibilityIdentifier = "logout button"
     return button
   }()
   
@@ -163,12 +166,12 @@ final class ProfileViewController: UIViewController, ProfileViewProtocol {
   
   func displayLogoutConfirmation() {
     let alert = UIAlertController(
-      title: "Выход",
-      message: "Вы уверены, что хотите выйти?",
+      title: "Пока, пока!",
+      message: "Уверены что хотите выйти?",
       preferredStyle: .alert
     )
-    alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
-    alert.addAction(UIAlertAction(title: "Выйти", style: .destructive) { [weak self] _ in
+    alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
+    alert.addAction(UIAlertAction(title: "Да", style: .destructive) { [weak self] _ in
       self?.presenter.confirmLogout()
     })
     present(alert, animated: true)

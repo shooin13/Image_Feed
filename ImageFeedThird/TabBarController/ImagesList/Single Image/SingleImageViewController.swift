@@ -36,6 +36,7 @@ final class SingleImageViewController: UIViewController {
     let button = UIButton()
     button.setImage(UIImage(named: "BackButtonLight"), for: .normal)
     button.translatesAutoresizingMaskIntoConstraints = false
+    button.accessibilityIdentifier = "nav back button white"
     return button
   }()
   

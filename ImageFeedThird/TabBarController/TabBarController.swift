@@ -19,9 +19,11 @@ final class TabBarController: UITabBarController {
     let imagesListPresenter = ImagesListPresenter(view: imagesListViewController)
     imagesListViewController.presenter = imagesListPresenter
     imagesListViewController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "ImagesTab"), selectedImage: nil)
+    imagesListViewController.tabBarItem.accessibilityIdentifier = "ImagesTab"
     
     let profileViewController = createProfileViewController()
     profileViewController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "ProfileTab"), selectedImage: nil)
+    profileViewController.tabBarItem.accessibilityIdentifier = "ProfileTab"
     
     self.viewControllers = [imagesListViewController, profileViewController]
   }

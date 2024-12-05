@@ -19,6 +19,7 @@ final class AuthViewController: UIViewController {
     button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
     button.translatesAutoresizingMaskIntoConstraints = false
     button.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+    button.accessibilityIdentifier = "Authenticate"
     return button
   }()
   

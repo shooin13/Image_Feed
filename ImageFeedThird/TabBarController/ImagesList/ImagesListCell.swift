@@ -34,6 +34,7 @@ final class ImagesListCell: UITableViewCell {
     button.translatesAutoresizingMaskIntoConstraints = false
     button.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
     button.isHidden = true
+    button.accessibilityIdentifier = "like button off"
     return button
   }()
   
@@ -169,6 +170,7 @@ final class ImagesListCell: UITableViewCell {
   func setIsLiked(_ isLiked: Bool) {
     let likeImage = isLiked ? UIImage(named: "LikeOn") : UIImage(named: "LikeOff")
     cellButton.setImage(likeImage, for: .normal)
+    cellButton.accessibilityIdentifier = isLiked ? "like button on" : "like button off"
   }
   
   func setLabelText(with text: String?) {
