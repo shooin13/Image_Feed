@@ -4,9 +4,11 @@ import WebKit
 // MARK: - ProfileLogoutService
 
 final class ProfileLogoutService {
-  
   // MARK: - Shared Instance
+  
   static let shared = ProfileLogoutService()
+  
+  // MARK: - Initializer
   
   private init() { }
   

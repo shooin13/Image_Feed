@@ -10,6 +10,7 @@ enum ProfileImageServiceError: Error {
 // MARK: - ProfileImageService
 
 final class ProfileImageService {
+  // MARK: - Notification
   
   static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
   
@@ -67,11 +68,12 @@ final class ProfileImageService {
   }
   
   // MARK: - Reset Avatar URL
+  
   func resetAvatarURL() {
     avatarURL = nil
   }
   
-  // MARK: - Make Request
+  // MARK: - Private Methods
   
   private func makeProfileImageRequest(for username: String) -> URLRequest? {
     guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
@@ -91,8 +93,6 @@ final class ProfileImageService {
     
     return request
   }
-  
-  // MARK: - Helper to complete all requests
   
   private func completeAllRequests(with result: Result<String, Error>) {
     ongoingRequests.forEach { $0(result) }

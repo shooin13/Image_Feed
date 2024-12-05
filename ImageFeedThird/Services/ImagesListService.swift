@@ -3,23 +3,27 @@ import UIKit
 // MARK: - ImagesListService
 
 final class ImagesListService {
+  // MARK: - Notification
+  
+  static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
   
   // MARK: - Shared Instance
   
   static let shared = ImagesListService()
   
-  private init() {}
-  
-  // MARK: - Notifications
-  static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
-  
   // MARK: - Properties
+  
   private(set) var photos: [Photo] = []
   private var lastLoadedPage: Int?
   private var isLoading: Bool = false
   private let urlSession: URLSession = .shared
   
+  // MARK: - Initializer
+  
+  private init() {}
+  
   // MARK: - Public Methods
+  
   func fetchPhotosNextPage() {
     guard !isLoading else { return }
     
@@ -48,20 +52,13 @@ final class ImagesListService {
           )
         case .failure(let error):
           print("[fetchPhotosNextPage]: [NetworkError] Ошибка сети \(error.localizedDescription), Request: \(request)")
-          let alert = UIAlertController(
-            title: "Ошибка сети",
-            message: "Не удалось загрузить фотографии. Проверьте подключение к интернету.",
-            preferredStyle: .alert
-          )
-          alert.addAction(UIAlertAction(title: "OK", style: .default))
-          UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+          self.showNetworkErrorAlert()
         }
       }
     }
     task.resume()
   }
   
-  // MARK: - Reset Photos
   func resetPhotos() {
     photos = []
     lastLoadedPage = nil
@@ -141,5 +138,15 @@ final class ImagesListService {
       largeImageURL: photoResult.urls.full,
       isLiked: photoResult.likedByUser
     )
+  }
+  
+  private func showNetworkErrorAlert() {
+    let alert = UIAlertController(
+      title: "Ошибка сети",
+      message: "Не удалось загрузить фотографии. Проверьте подключение к интернету.",
+      preferredStyle: .alert
+    )
+    alert.addAction(UIAlertAction(title: "OK", style: .default))
+    UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
   }
 }

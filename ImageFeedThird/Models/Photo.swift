@@ -1,13 +1,16 @@
 import Foundation
 
-//MARK: - Photo
+// MARK: - Photo
 
 struct Photo {
-  let id: String
-  let size: CGSize
-  let createdAt: Date?
-  let welcomeDescription: String?
-  let thumbImageURL: String
-  let largeImageURL: String
-  var isLiked: Bool
+    // MARK: - Properties
+
+    let id: String
+    let size: CGSize
+    let createdAt: Date?
+    let welcomeDescription: String?
+    let thumbImageURL: String
+    let largeImageURL: String
+    var isLiked: Bool
 }
+

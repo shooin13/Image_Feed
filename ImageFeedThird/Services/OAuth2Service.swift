@@ -9,7 +9,6 @@ enum AuthServiceError: Error {
 // MARK: - OAuth2Service
 
 final class OAuth2Service {
-  
   // MARK: - Shared Instance
   
   static let shared = OAuth2Service()
@@ -96,45 +95,12 @@ final class OAuth2Service {
     task.resume()
   }
   
-  // MARK: - Helper to complete all requests
+  // MARK: - Helper Methods
   
   private func completeAll(for code: String, result: Result<String, Error>) {
     if let completions = ongoingRequests[code] {
       completions.forEach { $0(result) }
     }
     ongoingRequests[code] = nil
-  }
-  
-  // MARK: - Error Handling
-  
-  private func handleNetworkError(_ error: Error) {
-    if let urlError = error as? URLError {
-      print("Ошибка запроса URL: \(urlError)")
-    } else if let decodingError = error as? DecodingError {
-      print("Ошибка декодирования: \(decodingError.localizedDescription)")
-      switch decodingError {
-      case .typeMismatch(let type, let context):
-        print("Несоответствие типа \(type) в \(context)")
-      case .valueNotFound(let value, let context):
-        print("Значение \(value) не найдено в \(context)")
-      case .keyNotFound(let key, let context):
-        print("Ключ \(key) не найден в \(context)")
-      case .dataCorrupted(let context):
-        print("Данные повреждены: \(context)")
-      @unknown default:
-        print("Неизвестная ошибка декодирования")
-      }
-    } else if let httpError = error as? NetworkError {
-      switch httpError {
-      case .httpStatusCode(let statusCode):
-        print("Ошибка HTTP со статусом: \(statusCode)")
-      case .urlSessionError:
-        print("Ошибка сессии URL")
-      default:
-        print("Неизвестная ошибка сети")
-      }
-    } else {
-      print("Неизвестная ошибка: \(error)")
-    }
   }
 }
