@@ -4,7 +4,6 @@ import ProgressHUD
 // MARK: - AuthViewController
 
 final class AuthViewController: UIViewController {
-  
   // MARK: - Properties
   
   private let oauth2Service = OAuth2Service.shared
@@ -107,6 +106,8 @@ extension AuthViewController: WebViewViewControllerDelegate {
     viewController.dismiss(animated: true)
   }
 }
+
+// MARK: - AuthViewControllerDelegate
 
 protocol AuthViewControllerDelegate: AnyObject {
   func didAuthenticate(_ vc: AuthViewController)

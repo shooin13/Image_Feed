@@ -1,11 +1,19 @@
 import UIKit
 
+// MARK: - SceneDelegate
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+  // MARK: - Properties
   
   var window: UIWindow?
   
+  // MARK: - Lifecycle
   
-  func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+  func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
     guard let scene = (scene as? UIWindowScene) else { return }
     window = UIWindow(windowScene: scene)
     window?.rootViewController = SplashViewController()
@@ -13,23 +21,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   }
   
   func sceneDidDisconnect(_ scene: UIScene) {
-    
   }
   
   func sceneDidBecomeActive(_ scene: UIScene) {
-    
   }
   
   func sceneWillResignActive(_ scene: UIScene) {
-    
   }
   
   func sceneWillEnterForeground(_ scene: UIScene) {
-    
   }
   
   func sceneDidEnterBackground(_ scene: UIScene) {
-    
   }
-  
 }

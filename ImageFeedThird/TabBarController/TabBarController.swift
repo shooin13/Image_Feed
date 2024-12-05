@@ -3,7 +3,6 @@ import UIKit
 // MARK: - TabBarController
 
 final class TabBarController: UITabBarController {
-  
   // MARK: - Lifecycle
   
   override func viewDidLoad() {
@@ -39,8 +38,6 @@ final class TabBarController: UITabBarController {
     
     return profileViewController
   }
-  
-  // MARK: - UI Setup
   
   private func setupTabBarAppearance() {
     tabBar.barTintColor = UIColor(named: "YPBlack")

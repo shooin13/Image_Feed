@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - WebViewPresenterProtocol
+
 public protocol WebViewPresenterProtocol {
   var view: WebViewViewControllerProtocol? { get set }
   func viewDidLoad()
@@ -7,13 +9,21 @@ public protocol WebViewPresenterProtocol {
   func code(from url: URL) -> String?
 }
 
+// MARK: - WebViewPresenter
+
 final class WebViewPresenter: WebViewPresenterProtocol {
+  // MARK: - Properties
+  
   weak var view: WebViewViewControllerProtocol?
   var authHelper: AuthHelperProtocol
+  
+  // MARK: - Initializer
   
   init(authHelper: AuthHelperProtocol = AuthHelper()) {
     self.authHelper = authHelper
   }
+  
+  // MARK: - WebViewPresenterProtocol Methods
   
   func viewDidLoad() {
     guard let request = authHelper.authRequest() else { return }

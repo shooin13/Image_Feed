@@ -1,7 +1,6 @@
 import UIKit
-import Kingfisher
 
-// MARK: - Protocols
+// MARK: - ImagesListViewControllerProtocol
 
 protocol ImagesListViewControllerProtocol: AnyObject {
   var presenter: ImagesListPresenterProtocol? { get set }
@@ -54,7 +53,7 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
     ])
   }
   
-  // MARK: - Protocol Implementation
+  // MARK: - ImagesListViewControllerProtocol Methods
   
   func updateTableViewAnimated() {
     tableView.reloadData()
@@ -77,7 +76,6 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
     present(singleImageVC, animated: true)
   }
 }
-
 
 // MARK: - UITableViewDataSource
 

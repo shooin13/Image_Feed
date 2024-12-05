@@ -1,19 +1,24 @@
 import Foundation
 
+// MARK: - ProfilePresenterProtocol
+
 protocol ProfilePresenterProtocol: AnyObject {
   func onViewDidLoad()
   func onLogoutButtonTapped()
   func confirmLogout()
 }
 
-
-import Foundation
+// MARK: - ProfilePresenter
 
 final class ProfilePresenter: ProfilePresenterProtocol {
+  // MARK: - Properties
+  
   weak var view: ProfileViewProtocol?
   private let profileService: ProfileService
   private let profileImageService: ProfileImageService
   private let logoutService: ProfileLogoutService
+  
+  // MARK: - Initializer
   
   init(
     view: ProfileViewProtocol,
@@ -26,6 +31,8 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     self.profileImageService = profileImageService
     self.logoutService = logoutService
   }
+  
+  // MARK: - ProfilePresenterProtocol Methods
   
   func onViewDidLoad() {
     profileService.fetchProfile { [weak self] result in
@@ -51,6 +58,4 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     logoutService.logout()
     view?.navigateToSplashScreen()
   }
-  
 }
-

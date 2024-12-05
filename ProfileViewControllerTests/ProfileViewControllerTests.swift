@@ -1,7 +1,11 @@
 @testable import ImageFeedThird
 import XCTest
 
+// MARK: - ProfileViewControllerTests
+
 final class ProfileViewControllerTests: XCTestCase {
+  // MARK: - Test Cases
+  
   func testProfileViewControllerCallsPresenterOnViewDidLoad() {
     // Given
     let presenterSpy = ProfilePresenterSpy()
@@ -44,5 +48,4 @@ final class ProfileViewControllerTests: XCTestCase {
     // Then
     XCTAssertTrue(presenterSpy.onLogoutButtonTappedCalled, "Метод onLogoutButtonTapped презентера не был вызван")
   }
-  
 }

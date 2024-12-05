@@ -1,7 +1,11 @@
 @testable import ImageFeedThird
 import XCTest
 
+// MARK: - ImagesListViewControllerTests
+
 final class ImagesListViewControllerTests: XCTestCase {
+  // MARK: - Test Cases
+  
   func testImagesListViewControllerCallsPresenterOnViewDidLoad() {
     // Given
     let presenterSpy = ImagesListViewPresenterSpy()

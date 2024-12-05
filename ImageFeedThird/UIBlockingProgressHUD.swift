@@ -4,8 +4,7 @@ import ProgressHUD
 // MARK: - UIBlockingProgressHUD
 
 final class UIBlockingProgressHUD {
-  
-  //MARK: - Properties
+  // MARK: - Properties
   
   private static var window: UIWindow? {
     return UIApplication.shared.windows.first
@@ -25,5 +24,4 @@ final class UIBlockingProgressHUD {
     print("UI разблокирован")
     ProgressHUD.dismiss()
   }
-  
 }

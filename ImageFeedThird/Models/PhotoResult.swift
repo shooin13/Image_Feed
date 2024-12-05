@@ -1,4 +1,8 @@
+// MARK: - PhotoResult
+
 struct PhotoResult: Decodable {
+  // MARK: - Properties
+  
   let id: String
   let createdAt: String
   let updatedAt: String
@@ -10,6 +14,8 @@ struct PhotoResult: Decodable {
   let likedByUser: Bool
   let description: String?
   let urls: UrlsResult
+  
+  // MARK: - CodingKeys
   
   private enum CodingKeys: String, CodingKey {
     case id
@@ -26,7 +32,10 @@ struct PhotoResult: Decodable {
   }
 }
 
+// MARK: - LikeResponse
+
 struct LikeResponse: Decodable {
+  // MARK: - Properties
+  
   let photo: PhotoResult
 }
-

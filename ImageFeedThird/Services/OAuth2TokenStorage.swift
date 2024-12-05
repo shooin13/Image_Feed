@@ -4,7 +4,6 @@ import SwiftKeychainWrapper
 // MARK: - OAuth2TokenStorage
 
 final class OAuth2TokenStorage {
-  
   // MARK: - Properties
   
   private let tokenKey = "BearerToken"

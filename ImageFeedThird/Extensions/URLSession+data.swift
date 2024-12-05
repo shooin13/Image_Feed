@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - NetworkError
+
 enum NetworkError: Error {
   case httpStatusCode(Int)
   case urlRequestError(Error)
@@ -7,7 +9,11 @@ enum NetworkError: Error {
   case decodingError(DecodingError)
 }
 
+// MARK: - URLSession Extension
+
 extension URLSession {
+  // MARK: - Data Request
+  
   func data(for request: URLRequest, completion: @escaping (Result<Data, Error>) -> Void) -> URLSessionTask {
     let fulfillCompletionOnTheMainThread: (Result<Data, Error>) -> Void = { result in
       DispatchQueue.main.async {
@@ -35,6 +41,8 @@ extension URLSession {
     task.resume()
     return task
   }
+  
+  // MARK: - Object Task
   
   func objectTask<T: Decodable>(
     for request: URLRequest,

@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Protocols
+// MARK: - ImagesListPresenterProtocol
 
 protocol ImagesListPresenterProtocol: AnyObject {
   var photosCount: Int { get }
@@ -15,6 +15,8 @@ protocol ImagesListPresenterProtocol: AnyObject {
 // MARK: - ImagesListPresenter
 
 final class ImagesListPresenter: ImagesListPresenterProtocol {
+  // MARK: - Properties
+  
   weak var view: ImagesListViewControllerProtocol?
   private let imagesListService: ImagesListService
   private let helper: ImagesListHelperProtocol
@@ -47,7 +49,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     NotificationCenter.default.removeObserver(self)
   }
   
-  // MARK: - Protocol Implementation
+  // MARK: - ImagesListPresenterProtocol Methods
   
   var photosCount: Int {
     return photos.count

@@ -5,7 +5,6 @@ import ProgressHUD
 // MARK: - SingleImageViewController
 
 final class SingleImageViewController: UIViewController {
-  
   // MARK: - Properties
   
   var imageURL: URL? {
@@ -84,25 +83,21 @@ final class SingleImageViewController: UIViewController {
   
   private func setupConstraints() {
     NSLayoutConstraint.activate([
-      // ScrollView constraints
       scrollView.topAnchor.constraint(equalTo: view.topAnchor),
       scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
       scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
       scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
       
-      // StubImageView constraints
       stubImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       stubImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
       stubImageView.widthAnchor.constraint(equalToConstant: 83),
       stubImageView.heightAnchor.constraint(equalToConstant: 75),
       
-      // BackButton constraints
       backButton.widthAnchor.constraint(equalToConstant: 44),
       backButton.heightAnchor.constraint(equalTo: backButton.widthAnchor),
       backButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
       backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
       
-      // ShareButton constraints
       shareButton.widthAnchor.constraint(equalToConstant: 44),
       shareButton.heightAnchor.constraint(equalTo: shareButton.widthAnchor),
       shareButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -134,8 +129,7 @@ final class SingleImageViewController: UIViewController {
       self.stubImageView.isHidden = true // Hide stub image when loading finishes
       
       switch result {
-      case .success(let value):
-        print("Изображение загружено: \(value.image)")
+      case .success:
         self.rescaleImage()
         self.centerImage()
       case .failure(let error):
@@ -187,7 +181,6 @@ final class SingleImageViewController: UIViewController {
 // MARK: - UIScrollViewDelegate
 
 extension SingleImageViewController: UIScrollViewDelegate {
-  
   func viewForZooming(in scrollView: UIScrollView) -> UIView? {
     imageView
   }

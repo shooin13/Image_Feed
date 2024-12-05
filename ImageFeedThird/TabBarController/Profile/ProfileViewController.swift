@@ -1,5 +1,4 @@
 import UIKit
-import Kingfisher
 
 // MARK: - ProfileViewProtocol
 
@@ -13,7 +12,6 @@ protocol ProfileViewProtocol: AnyObject {
 // MARK: - ProfileViewController
 
 final class ProfileViewController: UIViewController, ProfileViewProtocol {
-  
   // MARK: - Properties
   
   private var presenter: ProfilePresenterProtocol!
@@ -191,7 +189,6 @@ final class ProfileViewController: UIViewController, ProfileViewProtocol {
     alert.addAction(UIAlertAction(title: "ОК", style: .default))
     present(alert, animated: true)
   }
-  
   
   // MARK: - Actions
   

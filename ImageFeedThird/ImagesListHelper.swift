@@ -10,18 +10,27 @@ protocol ImagesListHelperProtocol {
 // MARK: - ImagesListHelper
 
 final class ImagesListHelper: ImagesListHelperProtocol {
+  // MARK: - Properties
+  
   private let configuration: ImagesListConfiguration
+  
+  // MARK: - Initializer
   
   init(configuration: ImagesListConfiguration = .standard) {
     self.configuration = configuration
   }
+  
+  // MARK: - ImagesListHelperProtocol Methods
   
   func fetchPhotosRequest(page: Int) -> URLRequest? {
     guard let accessToken = configuration.accessToken else {
       print("Ошибка: токен доступа отсутствует")
       return nil
     }
-    var components = URLComponents(url: configuration.baseURL.appendingPathComponent("photos"), resolvingAgainstBaseURL: false)
+    var components = URLComponents(
+      url: configuration.baseURL.appendingPathComponent("photos"),
+      resolvingAgainstBaseURL: false
+    )
     components?.queryItems = [
       URLQueryItem(name: "page", value: "\(page)"),
       URLQueryItem(name: "per_page", value: "10")

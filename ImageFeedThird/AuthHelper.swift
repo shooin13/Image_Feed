@@ -1,16 +1,26 @@
 import Foundation
 
+// MARK: - AuthHelperProtocol
+
 protocol AuthHelperProtocol {
   func authRequest() -> URLRequest?
   func code(from url: URL) -> String?
 }
 
+// MARK: - AuthHelper
+
 final class AuthHelper: AuthHelperProtocol {
+  // MARK: - Properties
+  
   let configuration: AuthConfiguration
+  
+  // MARK: - Initializer
   
   init(configuration: AuthConfiguration = .standard) {
     self.configuration = configuration
   }
+  
+  // MARK: - AuthHelperProtocol Methods
   
   func authRequest() -> URLRequest? {
     guard let url = authURL() else { return nil }

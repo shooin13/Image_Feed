@@ -1,12 +1,17 @@
-import Foundation
 @testable import ImageFeedThird
+import Foundation
+
+// MARK: - ProfilePresenterSpy
 
 final class ProfilePresenterSpy: ProfilePresenterProtocol {
-  weak var view: ProfileViewProtocol?
+  // MARK: - Properties
   
+  weak var view: ProfileViewProtocol?
   var onViewDidLoadCalled = false
   var onLogoutButtonTappedCalled = false
   var confirmLogoutCalled = false
+  
+  // MARK: - ProfilePresenterProtocol Methods
   
   func onViewDidLoad() {
     onViewDidLoadCalled = true

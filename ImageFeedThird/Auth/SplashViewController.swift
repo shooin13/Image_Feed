@@ -3,13 +3,14 @@ import UIKit
 // MARK: - SplashViewController
 
 final class SplashViewController: UIViewController {
-  
   // MARK: - Properties
+  
   private let storage = OAuth2TokenStorage()
   private let profileService = ProfileService.shared
   private let profileImageService = ProfileImageService.shared
   
   // MARK: - View Lifecycle
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     print("Экран загрузки загружен")
@@ -88,8 +89,8 @@ final class SplashViewController: UIViewController {
 }
 
 // MARK: - AuthViewControllerDelegate
+
 extension SplashViewController: AuthViewControllerDelegate {
-  
   func didAuthenticate(_ vc: AuthViewController) {
     vc.dismiss(animated: true) {
       guard let token = self.storage.token else {

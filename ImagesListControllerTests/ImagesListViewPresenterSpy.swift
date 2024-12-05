@@ -1,18 +1,25 @@
 import Foundation
 @testable import ImageFeedThird
 
+// MARK: - ImagesListViewPresenterSpy
+
 final class ImagesListViewPresenterSpy: ImagesListPresenterProtocol {
-  weak var view: ImagesListViewControllerProtocol?
+  // MARK: - Properties
   
+  weak var view: ImagesListViewControllerProtocol?
   var photosCount = 0
+  
   var onViewDidLoadCalled = false
   var didScrollToLastCellCalled = false
   var didSelectPhotoCalled = false
   var toggleLikeCalled = false
   var formattedDateCalled = false
+  
   var lastSelectedPhotoIndex: Int?
   var lastLikePhotoIndex: Int?
   var lastFormattedDate: Date?
+  
+  // MARK: - ImagesListPresenterProtocol Methods
   
   func onViewDidLoad() {
     onViewDidLoadCalled = true

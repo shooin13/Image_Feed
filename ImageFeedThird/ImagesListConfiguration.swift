@@ -3,8 +3,12 @@ import Foundation
 // MARK: - ImagesListConfiguration
 
 struct ImagesListConfiguration {
+  // MARK: - Properties
+  
   let baseURL: URL
   let accessToken: String?
+  
+  // MARK: - Standard Configuration
   
   static var standard: ImagesListConfiguration {
     return ImagesListConfiguration(

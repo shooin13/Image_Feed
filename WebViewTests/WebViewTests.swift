@@ -1,7 +1,27 @@
 @testable import ImageFeedThird
 import XCTest
 
+// MARK: - WebViewTests
+
 final class WebViewTests: XCTestCase {
+  // MARK: - Properties
+  
+  private let authHelper = AuthHelper()
+  private let app = XCUIApplication()
+  
+  // MARK: - Setup and Teardown
+  
+  override func setUpWithError() throws {
+    continueAfterFailure = false
+    app.launch()
+  }
+  
+  override func tearDownWithError() throws {
+    // Perform cleanup
+  }
+  
+  // MARK: - Test Cases
+  
   func testViewControllerCallsViewDidLoad() {
     // given
     let viewController = WebViewViewController()
@@ -10,7 +30,7 @@ final class WebViewTests: XCTestCase {
     presenter.view = viewController
     
     // when
-    _ = viewController.view // Триггер загрузки view
+    _ = viewController.view // Trigger view load
     
     // then
     XCTAssertTrue(presenter.viewDidLoadCalled, "Метод viewDidLoad у презентера не был вызван")
@@ -18,7 +38,6 @@ final class WebViewTests: XCTestCase {
   
   func testPresenterCallsLoadRequest() {
     // given
-    let authHelper = AuthHelper()
     let presenter = WebViewPresenter(authHelper: authHelper)
     let viewControllerSpy = WebViewViewControllerSpy()
     presenter.view = viewControllerSpy
@@ -34,7 +53,7 @@ final class WebViewTests: XCTestCase {
   
   func testProgressHiddenWhenOne() {
     // given
-    let presenter = WebViewPresenter()
+    let presenter = WebViewPresenter(authHelper: authHelper)
     let viewControllerSpy = WebViewViewControllerSpy()
     presenter.view = viewControllerSpy
     
