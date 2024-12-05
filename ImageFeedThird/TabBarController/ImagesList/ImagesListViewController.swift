@@ -12,9 +12,11 @@ protocol ImagesListViewControllerProtocol: AnyObject {
 
 // MARK: - ImagesListViewController
 
-class ImagesListViewController: UIViewController, ImagesListViewControllerProtocol {
+final class ImagesListViewController: UIViewController, ImagesListViewControllerProtocol {
   // MARK: - Properties
+  
   var presenter: ImagesListPresenterProtocol?
+  
   private let tableView: UITableView = {
     let tableView = UITableView()
     tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -25,7 +27,8 @@ class ImagesListViewController: UIViewController, ImagesListViewControllerProtoc
     return tableView
   }()
   
-  // MARK: - View Lifecycle
+  // MARK: - Lifecycle
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     setupTableView()
@@ -33,7 +36,8 @@ class ImagesListViewController: UIViewController, ImagesListViewControllerProtoc
     presenter?.onViewDidLoad()
   }
   
-  // MARK: - Setup TableView
+  // MARK: - Setup
+  
   private func setupTableView() {
     tableView.dataSource = self
     tableView.delegate = self
@@ -50,7 +54,8 @@ class ImagesListViewController: UIViewController, ImagesListViewControllerProtoc
     ])
   }
   
-  // MARK: - ImagesListViewControllerProtocol
+  // MARK: - Protocol Implementation
+  
   func updateTableViewAnimated() {
     tableView.reloadData()
   }
@@ -72,6 +77,7 @@ class ImagesListViewController: UIViewController, ImagesListViewControllerProtoc
     present(singleImageVC, animated: true)
   }
 }
+
 
 // MARK: - UITableViewDataSource
 

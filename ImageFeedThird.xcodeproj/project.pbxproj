@@ -28,6 +28,8 @@
 		5755C3C12CA4806300961E90 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5755C3C02CA4805D00961E90 /* WebViewController.swift */; };
 		575E09FC2CC3F517009BEC0D /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 575E09FB2CC3F517009BEC0D /* ProgressHUD */; };
 		575FB72C2D01219A004B3BE1 /* ProfileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575FB72B2D012196004B3BE1 /* ProfileHelper.swift */; };
+		575FB72E2D0126B0004B3BE1 /* ImagesListConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575FB72D2D0126AE004B3BE1 /* ImagesListConfiguration.swift */; };
+		575FB7302D0126C3004B3BE1 /* ImagesListHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575FB72F2D0126BE004B3BE1 /* ImagesListHelper.swift */; };
 		576C8C5B2CD2BF0700B4C184 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 576C8C5A2CD2BF0700B4C184 /* Kingfisher */; };
 		577F23972CB0834B00A6EF9D /* OAuth2Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577F23962CB0834B00A6EF9D /* OAuth2Service.swift */; };
 		577F239E2CB3081700A6EF9D /* URLSession+data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577F239D2CB3080E00A6EF9D /* URLSession+data.swift */; };
@@ -79,6 +81,8 @@
 		5755C3BD2CA47A9100961E90 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		5755C3C02CA4805D00961E90 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		575FB72B2D012196004B3BE1 /* ProfileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHelper.swift; sourceTree = "<group>"; };
+		575FB72D2D0126AE004B3BE1 /* ImagesListConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListConfiguration.swift; sourceTree = "<group>"; };
+		575FB72F2D0126BE004B3BE1 /* ImagesListHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListHelper.swift; sourceTree = "<group>"; };
 		577F23962CB0834B00A6EF9D /* OAuth2Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2Service.swift; sourceTree = "<group>"; };
 		577F239D2CB3080E00A6EF9D /* URLSession+data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+data.swift"; sourceTree = "<group>"; };
 		577F23A22CB3113500A6EF9D /* OAuthTokenResponseBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthTokenResponseBody.swift; sourceTree = "<group>"; };
@@ -142,6 +146,8 @@
 		570F50102C897F25007A8DA2 /* ImageFeedThird */ = {
 			isa = PBXGroup;
 			children = (
+				575FB72F2D0126BE004B3BE1 /* ImagesListHelper.swift */,
+				575FB72D2D0126AE004B3BE1 /* ImagesListConfiguration.swift */,
 				57E0295D2CC56A430000178E /* UIBlockingProgressHUD.swift */,
 				57F0382A2CA1E1420047EB19 /* AuthConfiguration.swift */,
 				575FB72B2D012196004B3BE1 /* ProfileHelper.swift */,
@@ -358,12 +364,14 @@
 			files = (
 				570F50162C897F25007A8DA2 /* ImagesListViewController.swift in Sources */,
 				5729DFDF2C8984F6007B3E55 /* ImagesListCell.swift in Sources */,
+				575FB72E2D0126B0004B3BE1 /* ImagesListConfiguration.swift in Sources */,
 				57E0295E2CC56A500000178E /* UIBlockingProgressHUD.swift in Sources */,
 				5755C3C12CA4806300961E90 /* WebViewController.swift in Sources */,
 				57E029682CC5C4670000178E /* UserResult.swift in Sources */,
 				5743E89B2D00E1E800E9891D /* AuthHelper.swift in Sources */,
 				572E5CB22CF61611003FE7B1 /* UrlsResult.swift in Sources */,
 				577F23972CB0834B00A6EF9D /* OAuth2Service.swift in Sources */,
+				575FB7302D0126C3004B3BE1 /* ImagesListHelper.swift in Sources */,
 				577F23A32CB3113C00A6EF9D /* OAuthTokenResponseBody.swift in Sources */,
 				57E029602CC570550000178E /* ProfileService.swift in Sources */,
 				577F23A52CB3123600A6EF9D /* OAuth2TokenStorage.swift in Sources */,

@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 // MARK: - Protocols
 
@@ -18,14 +17,20 @@ protocol ImagesListPresenterProtocol: AnyObject {
 final class ImagesListPresenter: ImagesListPresenterProtocol {
   weak var view: ImagesListViewControllerProtocol?
   private let imagesListService: ImagesListService
+  private let helper: ImagesListHelperProtocol
   private let dateFormatter: DateFormatter
   private var photos: [Photo] = []
   
   // MARK: - Initializer
-  init(view: ImagesListViewControllerProtocol,
-       imagesListService: ImagesListService = ImagesListService.shared) {
+  
+  init(
+    view: ImagesListViewControllerProtocol,
+    imagesListService: ImagesListService = ImagesListService.shared,
+    helper: ImagesListHelperProtocol = ImagesListHelper()
+  ) {
     self.view = view
     self.imagesListService = imagesListService
+    self.helper = helper
     self.dateFormatter = DateFormatter()
     self.dateFormatter.dateStyle = .long
     self.dateFormatter.timeStyle = .none
@@ -42,18 +47,19 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     NotificationCenter.default.removeObserver(self)
   }
   
-  // MARK: - ImagesListPresenterProtocol
+  // MARK: - Protocol Implementation
+  
   var photosCount: Int {
     return photos.count
   }
   
   func onViewDidLoad() {
-    imagesListService.fetchPhotosNextPage()
+    fetchNextPage()
   }
   
   func didScrollToLastCell(at index: Int) {
     if index == photos.count - 1 {
-      imagesListService.fetchPhotosNextPage()
+      fetchNextPage()
     }
   }
   
@@ -63,13 +69,10 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
   }
   
   func toggleLike(forPhotoAt index: Int, withCell cell: ImagesListCell) {
-    guard index < photos.count else { return }
-    
-    let photo = photos[index]
+    guard let photo = photo(at: index) else { return }
     UIBlockingProgressHUD.show()
     imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
       UIBlockingProgressHUD.dismiss()
-      
       switch result {
       case .success:
         self?.photos[index].isLiked.toggle()
@@ -85,11 +88,17 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
   }
   
   func didSelectPhoto(at index: Int) {
-    guard index < photos.count, let url = URL(string: photos[index].largeImageURL) else { return }
+    guard let photo = photo(at: index),
+          let url = URL(string: photo.largeImageURL) else { return }
     view?.openImageInSingleImageViewController(url: url)
   }
   
-  // MARK: - Notification Handlers
+  // MARK: - Private Methods
+  
+  private func fetchNextPage() {
+    imagesListService.fetchPhotosNextPage()
+  }
+  
   @objc private func onPhotosUpdated() {
     photos = imagesListService.photos
     view?.updateTableViewAnimated()
