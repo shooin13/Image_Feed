@@ -189,9 +189,16 @@ final class ProfileViewController: UIViewController, ProfileViewProtocol {
     present(alert, animated: true)
   }
   
+  
   // MARK: - Actions
   
   @objc private func logoutButtonTapped() {
     presenter.onLogoutButtonTapped()
+  }
+  
+  // MARK: - Tests
+  
+  func simulateLogoutButtonTap() {
+    logoutButton.sendActions(for: .touchUpInside)
   }
 }
